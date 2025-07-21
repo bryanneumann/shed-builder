@@ -15,7 +15,7 @@ import type { ShedConfig, ShedDesign } from "@shared/schema";
 
 export default function ShedDesigner() {
   const { toast } = useToast();
-  const [view3D, setView3D] = useState<'3d' | 'blueprint'>('3d');
+
   const [zipCode, setZipCode] = useState("78704");
   const [showMaterialList, setShowMaterialList] = useState(false);
   
@@ -114,11 +114,9 @@ export default function ShedDesigner() {
                 <h2 className="text-xl font-medium text-neutral-900">Shed Designer</h2>
               </div>
               
-              {/* 3D Visualization */}
+              {/* Blueprint Visualization */}
               <Shed3DViewer 
                 config={config}
-                view={view3D}
-                onViewChange={setView3D}
               />
               
               {/* Quick Dimensions */}

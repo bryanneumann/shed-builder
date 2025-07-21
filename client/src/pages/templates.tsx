@@ -9,7 +9,7 @@ import type { ShedDesign } from "@shared/schema";
 export default function Templates() {
   const { toast } = useToast();
 
-  const { data: templates = [], isLoading } = useQuery({
+  const { data: templates = [], isLoading } = useQuery<ShedDesign[]>({
     queryKey: ["/api/templates"],
   });
 
