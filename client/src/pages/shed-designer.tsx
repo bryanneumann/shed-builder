@@ -27,7 +27,7 @@ export default function ShedDesigner() {
     roofType: "gable" as const,
     foundationType: "concrete-slab" as const,
     lumberGrade: "pressure-treated" as const,
-    joistSpacing: 16 as const,
+    joistSpacing: 16,
     studSize: "2x4" as const,
     wallHeight: 8,
     doorCount: 1,
