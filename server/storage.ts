@@ -12,6 +12,8 @@ import {
   type UserLocation,
   type InsertUserLocation
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, ilike } from "drizzle-orm";
 
 export interface IStorage {
   // Shed designs
@@ -38,209 +40,218 @@ export interface IStorage {
   createUserLocation(location: InsertUserLocation): Promise<UserLocation>;
 }
 
-export class MemStorage implements IStorage {
-  private shedDesigns: Map<number, ShedDesign> = new Map();
-  private materialItems: Map<number, MaterialItem> = new Map();
-  private pricingData: Map<number, PricingData> = new Map();
-  private userLocations: Map<string, UserLocation> = new Map();
-  
-  private currentShedId = 1;
-  private currentMaterialId = 1;
-  private currentPricingId = 1;
-  private currentLocationId = 1;
-
+export class DatabaseStorage implements IStorage {
   constructor() {
     this.seedTemplates();
   }
 
   // Shed designs
   async getShedDesign(id: number): Promise<ShedDesign | undefined> {
-    return this.shedDesigns.get(id);
+    const [design] = await db.select().from(shedDesigns).where(eq(shedDesigns.id, id));
+    return design || undefined;
   }
 
   async getShedDesigns(): Promise<ShedDesign[]> {
-    return Array.from(this.shedDesigns.values());
+    return await db.select().from(shedDesigns);
   }
 
   async getTemplates(): Promise<ShedDesign[]> {
-    return Array.from(this.shedDesigns.values()).filter(design => design.isTemplate);
+    return await db.select().from(shedDesigns).where(eq(shedDesigns.isTemplate, true));
   }
 
   async createShedDesign(design: InsertShedDesign): Promise<ShedDesign> {
-    const id = this.currentShedId++;
-    const newDesign: ShedDesign = {
-      ...design,
-      id,
-      createdAt: new Date(),
-    };
-    this.shedDesigns.set(id, newDesign);
+    const [newDesign] = await db
+      .insert(shedDesigns)
+      .values(design)
+      .returning();
     return newDesign;
   }
 
   async updateShedDesign(id: number, design: Partial<InsertShedDesign>): Promise<ShedDesign | undefined> {
-    const existing = this.shedDesigns.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...design };
-    this.shedDesigns.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(shedDesigns)
+      .set(design)
+      .where(eq(shedDesigns.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async deleteShedDesign(id: number): Promise<boolean> {
-    return this.shedDesigns.delete(id);
+    const result = await db
+      .delete(shedDesigns)
+      .where(eq(shedDesigns.id, id))
+      .returning();
+    return result.length > 0;
   }
 
   // Material items
   async getMaterialItems(shedDesignId: number): Promise<MaterialItem[]> {
-    return Array.from(this.materialItems.values()).filter(item => item.shedDesignId === shedDesignId);
+    return await db
+      .select()
+      .from(materialItems)
+      .where(eq(materialItems.shedDesignId, shedDesignId));
   }
 
   async createMaterialItem(item: InsertMaterialItem): Promise<MaterialItem> {
-    const id = this.currentMaterialId++;
-    const newItem: MaterialItem = { ...item, id };
-    this.materialItems.set(id, newItem);
+    const [newItem] = await db
+      .insert(materialItems)
+      .values(item)
+      .returning();
     return newItem;
   }
 
   async updateMaterialItem(id: number, item: Partial<InsertMaterialItem>): Promise<MaterialItem | undefined> {
-    const existing = this.materialItems.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...item };
-    this.materialItems.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(materialItems)
+      .set(item)
+      .where(eq(materialItems.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async deleteMaterialItem(id: number): Promise<boolean> {
-    return this.materialItems.delete(id);
+    const result = await db
+      .delete(materialItems)
+      .where(eq(materialItems.id, id))
+      .returning();
+    return result.length > 0;
   }
 
   // Pricing data
   async getPricingData(productName: string, zipCode: string): Promise<PricingData[]> {
-    return Array.from(this.pricingData.values()).filter(
-      data => data.productName.toLowerCase().includes(productName.toLowerCase()) && 
-              data.zipCode === zipCode
-    );
+    return await db
+      .select()
+      .from(pricingData)
+      .where(and(
+        ilike(pricingData.productName, `%${productName}%`),
+        eq(pricingData.zipCode, zipCode)
+      ));
   }
 
   async createPricingData(data: InsertPricingData): Promise<PricingData> {
-    const id = this.currentPricingId++;
-    const newData: PricingData = { 
-      ...data, 
-      id, 
-      lastUpdated: new Date() 
-    };
-    this.pricingData.set(id, newData);
+    const [newData] = await db
+      .insert(pricingData)
+      .values(data)
+      .returning();
     return newData;
   }
 
   async updatePricingData(id: number, data: Partial<InsertPricingData>): Promise<PricingData | undefined> {
-    const existing = this.pricingData.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...data, lastUpdated: new Date() };
-    this.pricingData.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(pricingData)
+      .set({ ...data, lastUpdated: new Date() })
+      .where(eq(pricingData.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   // User locations
   async getUserLocation(zipCode: string): Promise<UserLocation | undefined> {
-    return this.userLocations.get(zipCode);
+    const [location] = await db
+      .select()
+      .from(userLocations)
+      .where(eq(userLocations.zipCode, zipCode));
+    return location || undefined;
   }
 
   async createUserLocation(location: InsertUserLocation): Promise<UserLocation> {
-    const id = this.currentLocationId++;
-    const newLocation: UserLocation = { ...location, id };
-    this.userLocations.set(location.zipCode, newLocation);
+    const [newLocation] = await db
+      .insert(userLocations)
+      .values(location)
+      .returning();
     return newLocation;
   }
 
-  private seedTemplates() {
-    // Pre-populate with common shed templates
-    const templates = [
-      {
-        name: "8x8 Basic",
-        length: 8,
-        width: 8,
-        height: 8,
-        roofType: "gable" as const,
-        foundationType: "concrete-slab" as const,
-        lumberGrade: "pressure-treated" as const,
-        joistSpacing: 16,
-        studSize: "2x4" as const,
-        wallHeight: 8,
-        doorCount: 1,
-        windowCount: 0,
-        sidingType: "plywood" as const,
-        roofingType: "asphalt-shingles" as const,
-        isTemplate: true,
-        templateCategory: "basic",
-      },
-      {
-        name: "10x12 Storage",
-        length: 12,
-        width: 10,
-        height: 9,
-        roofType: "gable" as const,
-        foundationType: "concrete-slab" as const,
-        lumberGrade: "pressure-treated" as const,
-        joistSpacing: 16,
-        studSize: "2x4" as const,
-        wallHeight: 8,
-        doorCount: 1,
-        windowCount: 1,
-        sidingType: "vinyl" as const,
-        roofingType: "asphalt-shingles" as const,
-        isTemplate: true,
-        templateCategory: "storage",
-      },
-      {
-        name: "8x10 Workshop",
-        length: 10,
-        width: 8,
-        height: 9,
-        roofType: "gable" as const,
-        foundationType: "concrete-slab" as const,
-        lumberGrade: "pressure-treated" as const,
-        joistSpacing: 16,
-        studSize: "2x4" as const,
-        wallHeight: 8,
-        doorCount: 1,
-        windowCount: 2,
-        sidingType: "wood" as const,
-        roofingType: "metal" as const,
-        isTemplate: true,
-        templateCategory: "workshop",
-      },
-      {
-        name: "12x16 Garage",
-        length: 16,
-        width: 12,
-        height: 10,
-        roofType: "gable" as const,
-        foundationType: "concrete-slab" as const,
-        lumberGrade: "pressure-treated" as const,
-        joistSpacing: 16,
-        studSize: "2x6" as const,
-        wallHeight: 9,
-        doorCount: 1,
-        windowCount: 2,
-        sidingType: "vinyl" as const,
-        roofingType: "asphalt-shingles" as const,
-        isTemplate: true,
-        templateCategory: "garage",
-      },
-    ];
+  private async seedTemplates() {
+    try {
+      // Check if templates already exist
+      const existingTemplates = await this.getTemplates();
+      if (existingTemplates.length > 0) {
+        return; // Templates already seeded
+      }
 
-    templates.forEach((template, index) => {
-      const id = this.currentShedId++;
-      this.shedDesigns.set(id, {
-        ...template,
-        id,
-        createdAt: new Date(),
-      });
-    });
+      // Pre-populate with common shed templates
+      const templates = [
+        {
+          name: "8x8 Basic",
+          length: 8,
+          width: 8,
+          height: 8,
+          roofType: "gable" as const,
+          foundationType: "concrete-slab" as const,
+          lumberGrade: "pressure-treated" as const,
+          joistSpacing: 16,
+          studSize: "2x4" as const,
+          wallHeight: 8,
+          doorCount: 1,
+          windowCount: 0,
+          sidingType: "plywood" as const,
+          roofingType: "asphalt-shingles" as const,
+          isTemplate: true,
+          templateCategory: "basic",
+        },
+        {
+          name: "10x12 Storage",
+          length: 12,
+          width: 10,
+          height: 9,
+          roofType: "gable" as const,
+          foundationType: "concrete-slab" as const,
+          lumberGrade: "pressure-treated" as const,
+          joistSpacing: 16,
+          studSize: "2x4" as const,
+          wallHeight: 8,
+          doorCount: 1,
+          windowCount: 1,
+          sidingType: "vinyl" as const,
+          roofingType: "asphalt-shingles" as const,
+          isTemplate: true,
+          templateCategory: "storage",
+        },
+        {
+          name: "8x10 Workshop",
+          length: 10,
+          width: 8,
+          height: 9,
+          roofType: "gable" as const,
+          foundationType: "concrete-slab" as const,
+          lumberGrade: "pressure-treated" as const,
+          joistSpacing: 16,
+          studSize: "2x4" as const,
+          wallHeight: 8,
+          doorCount: 1,
+          windowCount: 2,
+          sidingType: "wood" as const,
+          roofingType: "metal" as const,
+          isTemplate: true,
+          templateCategory: "workshop",
+        },
+        {
+          name: "12x16 Garage",
+          length: 16,
+          width: 12,
+          height: 10,
+          roofType: "gable" as const,
+          foundationType: "concrete-slab" as const,
+          lumberGrade: "pressure-treated" as const,
+          joistSpacing: 16,
+          studSize: "2x6" as const,
+          wallHeight: 9,
+          doorCount: 1,
+          windowCount: 2,
+          sidingType: "vinyl" as const,
+          roofingType: "asphalt-shingles" as const,
+          isTemplate: true,
+          templateCategory: "garage",
+        },
+      ];
+
+      // Insert templates into database
+      await db.insert(shedDesigns).values(templates);
+    } catch (error) {
+      console.error('Error seeding templates:', error);
+    }
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
