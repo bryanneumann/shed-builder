@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import Shed3DViewer from "@/components/shed-3d-viewer";
 import ConfigurationTabs from "@/components/configuration-tabs";
@@ -241,9 +242,11 @@ export default function ShedDesigner() {
                 ))}
               </div>
               
-              <Button variant="outline" className="mt-4 w-full">
-                📚 View Detailed Instructions
-              </Button>
+              <Link href="/help">
+                <Button variant="outline" className="mt-4 w-full">
+                  📚 View Detailed Instructions
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
