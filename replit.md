@@ -2,11 +2,20 @@
 
 ## Overview
 
-ShedBuilder Pro is a full-stack web application for designing and pricing custom sheds. It combines a 3D visualization tool with detailed material calculations, cost estimates, and local store availability. The application helps users design sheds with different configurations and generates comprehensive material lists for construction.
+ShedBuilder Pro is a full-stack web application for designing and pricing custom sheds. It features blueprint-style architectural visualizations with detailed material calculations, cost estimates, and local store availability. The application helps users design sheds with different configurations and generates comprehensive material lists for construction.
+
+## Recent Changes (January 2025)
+
+- Removed isometric 3D view in favor of blueprint-only visualizations (4 architectural views: Plan, Front Elevation, Side Elevation, Cross Section)
+- Implemented full navigation system with Templates, Materials, and Designer pages  
+- Removed Help tab and all help content per user preference for cleaner interface
+- Fixed navigation routing and component interface issues
+- Enhanced blueprint visualizations with construction details (studs, joists, dimensions)
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Interface preference: Clean, focused interface without help content or construction guides.
 
 ## System Architecture
 
@@ -35,12 +44,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Key Components
 
-### 3D Shed Designer
-- Interactive 3D visualization using Three.js
+### Blueprint Shed Designer
+- Blueprint-style architectural visualizations showing 4 views (Plan, Front Elevation, Side Elevation, Cross Section)
 - Real-time updates based on configuration changes
 - Support for different roof types (gable, gambrel, lean-to)
-- Blueprint view alternative to 3D rendering
-- Orbit controls for user interaction
+- Construction details including wall studs, floor joists, and dimensional annotations
+- Professional architectural drawing style for construction planning
 
 ### Configuration System
 - Tabbed interface for different shed aspects (foundation, walls, roofing, openings)
