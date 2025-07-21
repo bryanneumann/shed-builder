@@ -1,21 +1,70 @@
 import { Button } from "@/components/ui/button";
 import { Home, Save, Share2 } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 export default function AppHeader() {
+  const [location] = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === "/" && location === "/") return true;
+    if (path !== "/" && location.startsWith(path)) return true;
+    return false;
+  };
+
   return (
     <header className="bg-white shadow-material sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Home className="text-primary text-2xl" />
-            <h1 className="text-xl font-bold text-neutral-900">ShedBuilder Pro</h1>
+            <Link href="/">
+              <Home className="text-primary text-2xl cursor-pointer" />
+            </Link>
+            <Link href="/">
+              <h1 className="text-xl font-bold text-neutral-900 cursor-pointer">ShedBuilder Pro</h1>
+            </Link>
           </div>
           
           <nav className="hidden md:flex space-x-8">
-            <a href="#" className="text-primary border-b-2 border-primary pb-1">Designer</a>
-            <a href="#" className="text-neutral-700 hover:text-primary transition-colors">Templates</a>
-            <a href="#" className="text-neutral-700 hover:text-primary transition-colors">Materials</a>
-            <a href="#" className="text-neutral-700 hover:text-primary transition-colors">Help</a>
+            <Link 
+              href="/" 
+              className={`transition-colors pb-1 ${
+                isActive("/") 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-neutral-700 hover:text-primary"
+              }`}
+            >
+              Designer
+            </Link>
+            <Link 
+              href="/templates" 
+              className={`transition-colors pb-1 ${
+                isActive("/templates") 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-neutral-700 hover:text-primary"
+              }`}
+            >
+              Templates
+            </Link>
+            <Link 
+              href="/materials" 
+              className={`transition-colors pb-1 ${
+                isActive("/materials") 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-neutral-700 hover:text-primary"
+              }`}
+            >
+              Materials
+            </Link>
+            <Link 
+              href="/help" 
+              className={`transition-colors pb-1 ${
+                isActive("/help") 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-neutral-700 hover:text-primary"
+              }`}
+            >
+              Help
+            </Link>
           </nav>
           
           <div className="flex items-center space-x-4">
