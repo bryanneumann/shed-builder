@@ -97,7 +97,7 @@ export const shedConfigSchema = z.object({
   roofType: z.enum(["gable", "gambrel", "lean-to"]),
   foundationType: z.enum(["concrete-slab", "gravel-pad", "concrete-piers"]),
   lumberGrade: z.enum(["pressure-treated", "douglas-fir", "southern-pine"]),
-  joistSpacing: z.enum([12, 16, 24]),
+  joistSpacing: z.union([z.literal(12), z.literal(16), z.literal(24)]),
   studSize: z.enum(["2x4", "2x6"]),
   wallHeight: z.number().min(6).max(12),
   doorCount: z.number().min(0).max(4),

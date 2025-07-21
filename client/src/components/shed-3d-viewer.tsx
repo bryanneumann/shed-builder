@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { RotateCcw, ZoomIn, ZoomOut, Box, Compass } from 'lucide-react';
+import { Box, Compass } from 'lucide-react';
 import type { ShedConfig } from '@shared/schema';
 
 interface Shed3DViewerProps {
@@ -10,120 +9,107 @@ interface Shed3DViewerProps {
 }
 
 export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (view === '3d' && containerRef.current) {
-      loadThreeJS();
-    }
-  }, [view, config]);
-
-  const loadThreeJS = async () => {
-    try {
-      setIsLoading(true);
-      
-      // Dynamically import Three.js to avoid SSR issues
-      const THREE = await import('three');
-      const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
-      const { setupScene, createShedGeometry } = await import('@/lib/three-utils');
-      
-      // Clear previous content
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
-      
-      const { scene, camera, renderer } = setupScene();
-      
-      // Create shed geometry
-      const shedGroup = createShedGeometry({
-        length: config.length,
-        width: config.width,
-        height: config.height,
-        wallHeight: config.wallHeight,
-        roofType: config.roofType,
-      });
-      
-      scene.add(shedGroup);
-      
-      // Add orbit controls
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
-      controls.enableZoom = true;
-      controls.enablePan = true;
-      
-      // Set initial camera position based on shed size
-      const maxDimension = Math.max(config.length, config.width, config.height);
-      camera.position.set(
-        maxDimension * 1.5,
-        maxDimension * 1.2,
-        maxDimension * 1.5
-      );
-      controls.update();
-      
-      // Add renderer to container
-      if (containerRef.current) {
-        containerRef.current.appendChild(renderer.domElement);
-        
-        // Make renderer responsive
-        const resizeObserver = new ResizeObserver(() => {
-          if (containerRef.current) {
-            const width = containerRef.current.clientWidth;
-            const height = containerRef.current.clientHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-          }
-        });
-        
-        resizeObserver.observe(containerRef.current);
-        
-        // Animation loop
-        const animate = () => {
-          requestAnimationFrame(animate);
-          controls.update();
-          renderer.render(scene, camera);
-        };
-        animate();
-        
-        // Cleanup function
-        return () => {
-          resizeObserver.disconnect();
-          scene.clear();
-          renderer.dispose();
-        };
-      }
-    } catch (error) {
-      console.error('Failed to load 3D viewer:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResetView = () => {
-    // Reset camera position would go here
-    console.log('Reset view');
-  };
-
-  const handleZoomIn = () => {
-    // Zoom functionality would go here
-    console.log('Zoom in');
-  };
-
-  const handleZoomOut = () => {
-    // Zoom functionality would go here
-    console.log('Zoom out');
-  };
-
+  
   if (view === 'blueprint') {
     return (
-      <div className="bg-neutral-50 rounded-lg border-2 border-dashed border-neutral-300 h-96 flex items-center justify-center relative">
-        <div className="text-center text-neutral-600">
-          <Compass className="mx-auto h-16 w-16 mb-4" />
-          <p className="text-lg font-medium">Blueprint View</p>
-          <p className="text-sm opacity-75">
-            {config.length}' x {config.width}' {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof Shed
+      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-6">
+        <div className="w-full h-full flex items-center justify-center">
+          <svg viewBox="0 0 400 300" className="w-full h-full max-w-md">
+            {/* Foundation/Floor */}
+            <rect 
+              x={200 - (config.length * 8)} 
+              y={150 - (config.width * 6)} 
+              width={config.length * 16} 
+              height={config.width * 12}
+              fill="#f3f4f6" 
+              stroke="#374151" 
+              strokeWidth="2"
+            />
+            
+            {/* Walls */}
+            <rect 
+              x={200 - (config.length * 8)} 
+              y={150 - (config.width * 6)} 
+              width={config.length * 16} 
+              height={config.width * 12}
+              fill="none" 
+              stroke="#6b7280" 
+              strokeWidth="1.5"
+            />
+            
+            {/* Roof outline for gable */}
+            {config.roofType === 'gable' && (
+              <>
+                <line 
+                  x1={200 - (config.length * 8)} 
+                  y1={150 - (config.width * 6)} 
+                  x2={200} 
+                  y2={150 - (config.width * 6) - 30}
+                  stroke="#374151" 
+                  strokeWidth="2"
+                />
+                <line 
+                  x1={200} 
+                  y1={150 - (config.width * 6) - 30} 
+                  x2={200 + (config.length * 8)} 
+                  y2={150 - (config.width * 6)}
+                  stroke="#374151" 
+                  strokeWidth="2"
+                />
+                <line 
+                  x1={200 - (config.length * 8)} 
+                  y1={150 + (config.width * 6)} 
+                  x2={200} 
+                  y2={150 + (config.width * 6) - 30}
+                  stroke="#374151" 
+                  strokeWidth="2"
+                />
+                <line 
+                  x1={200} 
+                  y1={150 + (config.width * 6) - 30} 
+                  x2={200 + (config.length * 8)} 
+                  y2={150 + (config.width * 6)}
+                  stroke="#374151" 
+                  strokeWidth="2"
+                />
+              </>
+            )}
+            
+            {/* Door */}
+            {config.doorCount > 0 && (
+              <rect 
+                x={200 - (config.length * 4)} 
+                y={150 + (config.width * 6) - 2} 
+                width="20" 
+                height="4"
+                fill="#8b5cf6"
+              />
+            )}
+            
+            {/* Windows */}
+            {Array.from({ length: config.windowCount }).map((_, i) => (
+              <rect 
+                key={i}
+                x={200 - (config.length * 6) + (i * 25)} 
+                y={150 - (config.width * 6) - 2} 
+                width="15" 
+                height="4"
+                fill="#3b82f6"
+              />
+            ))}
+            
+            {/* Dimensions */}
+            <text x={200} y={150 + (config.width * 6) + 25} textAnchor="middle" className="text-xs fill-neutral-600">
+              {config.length}' × {config.width}'
+            </text>
+          </svg>
+        </div>
+        
+        <div className="mt-4 text-center">
+          <p className="text-sm text-neutral-600">
+            {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof • 
+            {config.doorCount} Door{config.doorCount !== 1 ? 's' : ''} • 
+            {config.windowCount} Window{config.windowCount !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
@@ -132,56 +118,124 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
 
   return (
     <div className="relative">
-      <div 
-        ref={containerRef}
-        className="bg-neutral-50 rounded-lg border-2 border-dashed border-neutral-300 h-96 relative overflow-hidden"
-      >
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-              <p className="text-sm text-neutral-600">Loading 3D viewer...</p>
-            </div>
-          </div>
-        )}
-        
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 text-white">
-          <div className="text-center">
-            <Box className="mx-auto h-12 w-12 mb-2" />
-            <p className="text-lg font-medium">3D Shed Visualization</p>
-            <p className="text-sm opacity-75">
-              {config.length}' x {config.width}' {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof Shed
-            </p>
-          </div>
+      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-6">
+        <div className="w-full h-full flex items-center justify-center">
+          <svg viewBox="0 0 400 300" className="w-full h-full max-w-lg">
+            {/* 3D Isometric View */}
+            
+            {/* Foundation (bottom face) */}
+            <polygon 
+              points={`${120},${220} ${120 + config.length * 12},${220} ${160 + config.length * 12},${180} ${160},${180}`}
+              fill="#d1d5db" 
+              stroke="#374151" 
+              strokeWidth="1.5"
+            />
+            
+            {/* Floor */}
+            <polygon 
+              points={`${120},${210} ${120 + config.length * 12},${210} ${160 + config.length * 12},${170} ${160},${170}`}
+              fill="#f9fafb" 
+              stroke="#6b7280" 
+              strokeWidth="1"
+            />
+            
+            {/* Front wall */}
+            <polygon 
+              points={`${120},${210} ${120},${210 - config.wallHeight * 8} ${160},${170 - config.wallHeight * 8} ${160},${170}`}
+              fill="#fef3c7" 
+              stroke="#92400e" 
+              strokeWidth="1.5"
+            />
+            
+            {/* Side wall */}
+            <polygon 
+              points={`${160},${170} ${160},${170 - config.wallHeight * 8} ${160 + config.length * 12},${170 - config.wallHeight * 8} ${160 + config.length * 12},${170}`}
+              fill="#fde68a" 
+              stroke="#92400e" 
+              strokeWidth="1.5"
+            />
+            
+            {/* Roof (gable style) */}
+            {config.roofType === 'gable' && (
+              <>
+                {/* Left roof face */}
+                <polygon 
+                  points={`${120},${210 - config.wallHeight * 8} ${140},${190 - config.wallHeight * 8} ${180 + config.length * 12},${150 - config.wallHeight * 8} ${160 + config.length * 12},${170 - config.wallHeight * 8}`}
+                  fill="#7c2d12" 
+                  stroke="#451a03" 
+                  strokeWidth="1.5"
+                />
+                {/* Right roof face */}
+                <polygon 
+                  points={`${160},${170 - config.wallHeight * 8} ${180 + config.length * 12},${150 - config.wallHeight * 8} ${140 + config.length * 12},${190 - config.wallHeight * 8} ${120 + config.length * 12},${210 - config.wallHeight * 8}`}
+                  fill="#92400e" 
+                  stroke="#451a03" 
+                  strokeWidth="1.5"
+                />
+              </>
+            )}
+            
+            {/* Door */}
+            {config.doorCount > 0 && (
+              <rect 
+                x={125} 
+                y={210 - config.wallHeight * 6} 
+                width="12" 
+                height={config.wallHeight * 6}
+                fill="#8b5cf6" 
+                stroke="#5b21b6" 
+                strokeWidth="1"
+              />
+            )}
+            
+            {/* Windows on front wall */}
+            {Array.from({ length: Math.min(config.windowCount, 2) }).map((_, i) => (
+              <rect 
+                key={i}
+                x={140 + (i * 20)} 
+                y={210 - config.wallHeight * 4} 
+                width="12" 
+                height="8"
+                fill="#3b82f6" 
+                stroke="#1d4ed8" 
+                strokeWidth="1"
+              />
+            ))}
+            
+            {/* Framing lines */}
+            <g stroke="#6b7280" strokeWidth="0.5" opacity="0.6">
+              {/* Vertical studs on front wall */}
+              {Array.from({ length: Math.floor(config.width / 2) + 1 }).map((_, i) => (
+                <line 
+                  key={i}
+                  x1={120 + (i * 16)} 
+                  y1={210} 
+                  x2={120 + (i * 16)} 
+                  y2={210 - config.wallHeight * 8}
+                />
+              ))}
+            </g>
+            
+            {/* Dimensions */}
+            <text x={140 + (config.length * 6)} y={235} textAnchor="middle" className="text-xs fill-neutral-600">
+              {config.length}'
+            </text>
+            <text x={90} y={190} textAnchor="middle" className="text-xs fill-neutral-600" transform={`rotate(-30 90 190)`}>
+              {config.width}'
+            </text>
+            <text x={110} y={170} textAnchor="middle" className="text-xs fill-neutral-600" transform={`rotate(-90 110 170)`}>
+              {config.wallHeight}'
+            </text>
+          </svg>
         </div>
-      </div>
-      
-      {/* 3D Controls */}
-      <div className="absolute top-4 right-4 space-y-2">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleResetView}
-          className="p-2 bg-white shadow-md hover:shadow-lg"
-        >
-          <RotateCcw className="h-4 w-4" />
-        </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleZoomIn}
-          className="p-2 bg-white shadow-md hover:shadow-lg"
-        >
-          <ZoomIn className="h-4 w-4" />
-        </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleZoomOut}
-          className="p-2 bg-white shadow-md hover:shadow-lg"
-        >
-          <ZoomOut className="h-4 w-4" />
-        </Button>
+        
+        <div className="mt-4 text-center">
+          <p className="text-sm text-neutral-600">
+            {config.foundationType.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} • 
+            {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof • 
+            {config.lumberGrade.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+          </p>
+        </div>
       </div>
 
       {/* View Toggle */}
@@ -193,7 +247,7 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
           className="text-xs"
         >
           <Box className="h-3 w-3 mr-1" />
-          3D View
+          Isometric
         </Button>
         <Button
           size="sm"
@@ -202,7 +256,7 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
           className="text-xs"
         >
           <Compass className="h-3 w-3 mr-1" />
-          Blueprint
+          Top View
         </Button>
       </div>
     </div>
