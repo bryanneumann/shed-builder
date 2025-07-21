@@ -11,6 +11,9 @@ ShedBuilder Pro is a full-stack web application for designing and pricing custom
 - Removed Help tab and all help content per user preference for cleaner interface
 - Fixed navigation routing and component interface issues
 - Enhanced blueprint visualizations with construction details (studs, joists, dimensions)
+- Expanded roof options to 6 types: gable, gambrel, hip, shed, lean-to, and saltbox roofs
+- Updated blueprint visualizations to properly render all new roof types with construction details
+- Updated templates with the new roof styles showcasing diverse architectural options
 
 ## User Preferences
 
@@ -47,7 +50,7 @@ Interface preference: Clean, focused interface without help content or construct
 ### Blueprint Shed Designer
 - Blueprint-style architectural visualizations showing 4 views (Plan, Front Elevation, Side Elevation, Cross Section)
 - Real-time updates based on configuration changes
-- Support for different roof types (gable, gambrel, lean-to)
+- Support for 6 different roof types (gable, gambrel, hip, shed, lean-to, saltbox)
 - Construction details including wall studs, floor joists, and dimensional annotations
 - Professional architectural drawing style for construction planning
 
