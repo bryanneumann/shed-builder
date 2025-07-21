@@ -179,8 +179,20 @@ export default function ConfigurationTabs({ config, onConfigChange }: Configurat
                     <Label htmlFor="gambrel" className="text-sm">Gambrel Roof (Barn Style)</Label>
                   </div>
                   <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="hip" id="hip" />
+                    <Label htmlFor="hip" className="text-sm">Hip Roof (Four-Sided)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="shed" id="shed" />
+                    <Label htmlFor="shed" className="text-sm">Shed Roof (Modern Single Slope)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <RadioGroupItem value="lean-to" id="lean-to" />
-                    <Label htmlFor="lean-to" className="text-sm">Lean-to Roof (Single Slope)</Label>
+                    <Label htmlFor="lean-to" className="text-sm">Lean-to Roof (Attached Single Slope)</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="saltbox" id="saltbox" />
+                    <Label htmlFor="saltbox" className="text-sm">Saltbox Roof (Asymmetrical)</Label>
                   </div>
                 </RadioGroup>
               </div>

@@ -8,7 +8,7 @@ export const shedDesigns = pgTable("shed_designs", {
   length: real("length").notNull(), // feet
   width: real("width").notNull(), // feet
   height: real("height").notNull(), // feet
-  roofType: text("roof_type").notNull().default("gable"), // gable, gambrel, lean-to
+  roofType: text("roof_type").notNull().default("gable"), // gable, gambrel, lean-to, hip, shed, saltbox
   foundationType: text("foundation_type").notNull().default("concrete-slab"),
   lumberGrade: text("lumber_grade").notNull().default("pressure-treated"),
   joistSpacing: integer("joist_spacing").notNull().default(16), // inches on center
@@ -94,7 +94,7 @@ export const shedConfigSchema = z.object({
   length: z.number().min(4).max(40),
   width: z.number().min(4).max(40),
   height: z.number().min(6).max(16),
-  roofType: z.enum(["gable", "gambrel", "lean-to"]),
+  roofType: z.enum(["gable", "gambrel", "lean-to", "hip", "shed", "saltbox"]),
   foundationType: z.enum(["concrete-slab", "gravel-pad", "concrete-piers"]),
   lumberGrade: z.enum(["pressure-treated", "douglas-fir", "southern-pine"]),
   joistSpacing: z.union([z.literal(12), z.literal(16), z.literal(24)]),

@@ -52,7 +52,7 @@ export default function ShedDesigner() {
       length: template.length,
       width: template.width,
       height: template.height,
-      roofType: template.roofType as "gable" | "gambrel" | "lean-to",
+      roofType: template.roofType as "gable" | "gambrel" | "lean-to" | "hip" | "shed" | "saltbox",
       foundationType: template.foundationType as "concrete-slab" | "gravel-pad" | "concrete-piers",
       lumberGrade: template.lumberGrade as "pressure-treated" | "douglas-fir" | "southern-pine",
       joistSpacing: template.joistSpacing as 12 | 16 | 24,

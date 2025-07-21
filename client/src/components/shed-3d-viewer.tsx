@@ -126,6 +126,43 @@ export default function Shed3DViewer({ config }: Shed3DViewerProps) {
                 strokeWidth="2"
               />
             )}
+            {config.roofType === 'gambrel' && (
+              <>
+                <polygon 
+                  points={`${100 - (config.length * 6)},${130 - (config.wallHeight * 8)} ${100 - (config.length * 3)},${130 - (config.wallHeight * 8) - 15} ${100},${130 - (config.wallHeight * 8) - 18} ${100 + (config.length * 3)},${130 - (config.wallHeight * 8) - 15} ${100 + (config.length * 6)},${130 - (config.wallHeight * 8)}`}
+                  fill="#7c2d12" 
+                  stroke="#451a03" 
+                  strokeWidth="2"
+                />
+              </>
+            )}
+            {config.roofType === 'hip' && (
+              <rect 
+                x={100 - (config.length * 6)} 
+                y={130 - (config.wallHeight * 8) - 15} 
+                width={config.length * 12} 
+                height="15"
+                fill="#7c2d12" 
+                stroke="#451a03" 
+                strokeWidth="2"
+              />
+            )}
+            {(config.roofType === 'shed' || config.roofType === 'lean-to') && (
+              <polygon 
+                points={`${100 - (config.length * 6)},${130 - (config.wallHeight * 8)} ${100 - (config.length * 6)},${130 - (config.wallHeight * 8) - 15} ${100 + (config.length * 6)},${130 - (config.wallHeight * 8) - 5} ${100 + (config.length * 6)},${130 - (config.wallHeight * 8)}`}
+                fill="#7c2d12" 
+                stroke="#451a03" 
+                strokeWidth="2"
+              />
+            )}
+            {config.roofType === 'saltbox' && (
+              <polygon 
+                points={`${100 - (config.length * 6)},${130 - (config.wallHeight * 8)} ${100 - (config.length * 2)},${130 - (config.wallHeight * 8) - 20} ${100 + (config.length * 6)},${130 - (config.wallHeight * 8) - 5}`}
+                fill="#7c2d12" 
+                stroke="#451a03" 
+                strokeWidth="2"
+              />
+            )}
             
             {/* Door */}
             {config.doorCount > 0 && (
@@ -201,12 +238,28 @@ export default function Shed3DViewer({ config }: Shed3DViewerProps) {
             />
             
             {/* Roof */}
-            {config.roofType === 'gable' && (
+            {(config.roofType === 'gable' || config.roofType === 'gambrel' || config.roofType === 'saltbox') && (
               <rect 
                 x={100 - (config.width * 6)} 
                 y={130 - (config.wallHeight * 8) - 20} 
                 width={config.width * 12} 
                 height="20"
+                fill="#7c2d12" 
+                stroke="#451a03" 
+                strokeWidth="2"
+              />
+            )}
+            {config.roofType === 'hip' && (
+              <polygon 
+                points={`${100 - (config.width * 6)},${130 - (config.wallHeight * 8)} ${100 - (config.width * 3)},${130 - (config.wallHeight * 8) - 15} ${100 + (config.width * 3)},${130 - (config.wallHeight * 8) - 15} ${100 + (config.width * 6)},${130 - (config.wallHeight * 8)}`}
+                fill="#7c2d12" 
+                stroke="#451a03" 
+                strokeWidth="2"
+              />
+            )}
+            {(config.roofType === 'shed' || config.roofType === 'lean-to') && (
+              <polygon 
+                points={`${100 - (config.width * 6)},${130 - (config.wallHeight * 8) - 20} ${100 + (config.width * 6)},${130 - (config.wallHeight * 8) - 5} ${100 + (config.width * 6)},${130 - (config.wallHeight * 8)} ${100 - (config.width * 6)},${130 - (config.wallHeight * 8)}`}
                 fill="#7c2d12" 
                 stroke="#451a03" 
                 strokeWidth="2"
@@ -327,6 +380,100 @@ export default function Shed3DViewer({ config }: Shed3DViewerProps) {
                   y2={123 - (config.wallHeight * 8) - 25}
                   stroke="#451a03" 
                   strokeWidth="2"
+                />
+              </>
+            )}
+            {config.roofType === 'hip' && (
+              <>
+                <line 
+                  x1={100 - (config.width * 6)} 
+                  y1={123 - (config.wallHeight * 8)} 
+                  x2={100 - (config.width * 3)} 
+                  y2={123 - (config.wallHeight * 8) - 15}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100 + (config.width * 6)} 
+                  y1={123 - (config.wallHeight * 8)} 
+                  x2={100 + (config.width * 3)} 
+                  y2={123 - (config.wallHeight * 8) - 15}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100 - (config.width * 3)} 
+                  y1={123 - (config.wallHeight * 8) - 15} 
+                  x2={100 + (config.width * 3)} 
+                  y2={123 - (config.wallHeight * 8) - 15}
+                  stroke="#451a03" 
+                  strokeWidth="2"
+                />
+              </>
+            )}
+            {(config.roofType === 'shed' || config.roofType === 'lean-to') && (
+              <line 
+                x1={100 - (config.width * 6)} 
+                y1={123 - (config.wallHeight * 8)} 
+                x2={100 + (config.width * 6)} 
+                y2={123 - (config.wallHeight * 8) - 20}
+                stroke="#451a03" 
+                strokeWidth="3"
+              />
+            )}
+            {config.roofType === 'gambrel' && (
+              <>
+                <line 
+                  x1={100 - (config.width * 6)} 
+                  y1={123 - (config.wallHeight * 8)} 
+                  x2={100 - (config.width * 3)} 
+                  y2={123 - (config.wallHeight * 8) - 10}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100 - (config.width * 3)} 
+                  y1={123 - (config.wallHeight * 8) - 10} 
+                  x2={100} 
+                  y2={123 - (config.wallHeight * 8) - 25}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100} 
+                  y1={123 - (config.wallHeight * 8) - 25} 
+                  x2={100 + (config.width * 3)} 
+                  y2={123 - (config.wallHeight * 8) - 10}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100 + (config.width * 3)} 
+                  y1={123 - (config.wallHeight * 8) - 10} 
+                  x2={100 + (config.width * 6)} 
+                  y2={123 - (config.wallHeight * 8)}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+              </>
+            )}
+            {config.roofType === 'saltbox' && (
+              <>
+                <line 
+                  x1={100 - (config.width * 6)} 
+                  y1={123 - (config.wallHeight * 8)} 
+                  x2={100 - (config.width * 2)} 
+                  y2={123 - (config.wallHeight * 8) - 25}
+                  stroke="#451a03" 
+                  strokeWidth="3"
+                />
+                <line 
+                  x1={100 - (config.width * 2)} 
+                  y1={123 - (config.wallHeight * 8) - 25} 
+                  x2={100 + (config.width * 6)} 
+                  y2={123 - (config.wallHeight * 8) - 5}
+                  stroke="#451a03" 
+                  strokeWidth="3"
                 />
               </>
             )}
