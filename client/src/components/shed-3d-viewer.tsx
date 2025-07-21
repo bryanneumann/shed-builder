@@ -12,13 +12,13 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
   
   if (view === 'blueprint') {
     return (
-      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-4">
-        <div className="grid grid-cols-2 gap-4 h-full">
+      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-4 overflow-hidden">
+        <div className="grid grid-cols-2 gap-4 h-full max-h-full">
           
           {/* Top View (Plan) */}
-          <div className="border border-neutral-300 rounded p-2">
-            <h4 className="text-xs font-medium text-neutral-700 mb-2 text-center">PLAN VIEW</h4>
-            <svg viewBox="0 0 200 160" className="w-full h-full">
+          <div className="border border-neutral-300 rounded p-2 overflow-hidden">
+            <h4 className="text-xs font-medium text-neutral-700 mb-1 text-center">PLAN VIEW</h4>
+            <svg viewBox="0 0 200 140" className="w-full h-24">
               {/* Floor outline */}
               <rect 
                 x={100 - (config.length * 6)} 
@@ -101,9 +101,9 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
           </div>
           
           {/* Front Elevation */}
-          <div className="border border-neutral-300 rounded p-2">
-            <h4 className="text-xs font-medium text-neutral-700 mb-2 text-center">FRONT ELEVATION</h4>
-            <svg viewBox="0 0 200 160" className="w-full h-full">
+          <div className="border border-neutral-300 rounded p-2 overflow-hidden">
+            <h4 className="text-xs font-medium text-neutral-700 mb-1 text-center">FRONT ELEVATION</h4>
+            <svg viewBox="0 0 200 140" className="w-full h-24">
               {/* Foundation */}
               <rect 
                 x={100 - (config.length * 6)} 
@@ -194,9 +194,9 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
           </div>
           
           {/* Side Elevation */}
-          <div className="border border-neutral-300 rounded p-2">
-            <h4 className="text-xs font-medium text-neutral-700 mb-2 text-center">SIDE ELEVATION</h4>
-            <svg viewBox="0 0 200 160" className="w-full h-full">
+          <div className="border border-neutral-300 rounded p-2 overflow-hidden">
+            <h4 className="text-xs font-medium text-neutral-700 mb-1 text-center">SIDE ELEVATION</h4>
+            <svg viewBox="0 0 200 140" className="w-full h-24">
               {/* Foundation */}
               <rect 
                 x={100 - (config.width * 6)} 
@@ -261,9 +261,9 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
           </div>
           
           {/* Cross Section */}
-          <div className="border border-neutral-300 rounded p-2">
-            <h4 className="text-xs font-medium text-neutral-700 mb-2 text-center">CROSS SECTION</h4>
-            <svg viewBox="0 0 200 160" className="w-full h-full">
+          <div className="border border-neutral-300 rounded p-2 overflow-hidden">
+            <h4 className="text-xs font-medium text-neutral-700 mb-1 text-center">CROSS SECTION</h4>
+            <svg viewBox="0 0 200 140" className="w-full h-24">
               {/* Foundation slab */}
               <rect 
                 x={100 - (config.width * 6)} 
@@ -362,9 +362,9 @@ export default function Shed3DViewer({ config, view, onViewChange }: Shed3DViewe
 
   return (
     <div className="relative">
-      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-6">
+      <div className="bg-white rounded-lg border-2 border-neutral-200 h-96 p-6 overflow-hidden">
         <div className="w-full h-full flex items-center justify-center">
-          <svg viewBox="0 0 400 300" className="w-full h-full max-w-lg">
+          <svg viewBox="0 0 400 280" className="w-full h-full max-w-lg">
             {/* 3D Isometric View */}
             
             {/* Foundation (bottom face) */}
