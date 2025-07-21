@@ -55,16 +55,6 @@ export default function AppHeader() {
             >
               Materials
             </Link>
-            <Link 
-              href="/help" 
-              className={`transition-colors pb-1 ${
-                isActive("/help") 
-                  ? "text-primary border-b-2 border-primary" 
-                  : "text-neutral-700 hover:text-primary"
-              }`}
-            >
-              Help
-            </Link>
           </nav>
           
           <div className="flex items-center space-x-4">
