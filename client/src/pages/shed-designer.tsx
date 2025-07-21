@@ -215,39 +215,7 @@ export default function ShedDesigner() {
             {/* Store Availability */}
             <StoreAvailability zipCode={zipCode} />
             
-            {/* Build Guide */}
-            <div className="bg-white rounded-lg shadow-material p-6">
-              <h3 className="font-medium text-neutral-900 mb-4">Construction Guide</h3>
-              <div className="space-y-3">
-                {[
-                  "Prepare foundation & level site",
-                  "Install floor joists & decking", 
-                  "Frame walls & install",
-                  "Install roof trusses",
-                  "Add sheathing & roofing",
-                  "Install siding & trim"
-                ].map((step, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 ${
-                      index === 0 
-                        ? "bg-success text-white" 
-                        : "bg-neutral-300 text-neutral-600"
-                    }`}>
-                      {index + 1}
-                    </div>
-                    <span className={`text-sm ${index === 0 ? "text-neutral-900" : "text-neutral-600"}`}>
-                      {step}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              
-              <Link href="/help">
-                <Button variant="outline" className="mt-4 w-full">
-                  📚 View Detailed Instructions
-                </Button>
-              </Link>
-            </div>
+
           </div>
         </div>
       </div>
