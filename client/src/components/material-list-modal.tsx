@@ -186,6 +186,26 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
           </DialogTitle>
         </DialogHeader>
         
+        {/* Store Selection - Prominent at top */}
+        <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 mb-6">
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium text-neutral-700">Select Your Store:</label>
+            <Select value={selectedStore} onValueChange={setSelectedStore}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Choose a store" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="home-depot">Home Depot</SelectItem>
+                <SelectItem value="lowes">Lowe's</SelectItem>
+                <SelectItem value="menards">Menards</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="text-sm text-neutral-600">
+              Pricing and ordering will be customized for {stores[selectedStore as keyof typeof stores].name}
+            </div>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Lumber Section */}
           {lumberMaterials.length > 0 && (
@@ -270,37 +290,20 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
             <div className="text-2xl font-bold text-primary">${totalCost.toFixed(2)}</div>
           </div>
           
-          <div className="space-y-4">
-            {/* Store Selection */}
-            <div className="flex items-center gap-4">
-              <label className="text-sm font-medium">Select Store:</label>
-              <Select value={selectedStore} onValueChange={setSelectedStore}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Choose a store" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="home-depot">Home Depot</SelectItem>
-                  <SelectItem value="lowes">Lowe's</SelectItem>
-                  <SelectItem value="menards">Menards</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button onClick={handleOrderFromStore} className="font-medium">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Order from {stores[selectedStore as keyof typeof stores].name}
-              </Button>
-              <Button variant="outline" onClick={handlePrintList}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print Shopping List
-              </Button>
-              <Button variant="outline" onClick={handleExportPDF}>
-                <Download className="h-4 w-4 mr-2" />
-                Export to PDF
-              </Button>
-            </div>
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button onClick={handleOrderFromStore} className="font-medium">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Order from {stores[selectedStore as keyof typeof stores].name}
+            </Button>
+            <Button variant="outline" onClick={handlePrintList}>
+              <Printer className="h-4 w-4 mr-2" />
+              Print Shopping List
+            </Button>
+            <Button variant="outline" onClick={handleExportPDF}>
+              <Download className="h-4 w-4 mr-2" />
+              Export to PDF
+            </Button>
           </div>
         </div>
       </DialogContent>
