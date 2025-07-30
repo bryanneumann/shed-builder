@@ -9,8 +9,28 @@ export interface MaterialCalculation {
   estimatedPrice: number;
 }
 
-export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
+// Store-specific pricing multipliers
+const storePricing = {
+  "home-depot": {
+    name: "Home Depot",
+    multiplier: 1.0, // Base pricing
+    skuPrefix: "HD"
+  },
+  "lowes": {
+    name: "Lowe's", 
+    multiplier: 0.95, // 5% lower than Home Depot
+    skuPrefix: "LW"
+  },
+  "menards": {
+    name: "Menards",
+    multiplier: 0.92, // 8% lower than Home Depot  
+    skuPrefix: "MN"
+  }
+};
+
+export function calculateMaterials(config: ShedConfig, selectedStore: string = "home-depot"): MaterialCalculation[] {
   const materials: MaterialCalculation[] = [];
+  const storeInfo = storePricing[selectedStore as keyof typeof storePricing] || storePricing["home-depot"];
   
   // Foundation calculations
   if (config.foundationType === "concrete-slab") {
@@ -22,7 +42,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "4000 PSI concrete for slab",
       quantity: concreteYards,
       unit: "cubic yards",
-      estimatedPrice: concreteYards * 180,
+      estimatedPrice: Math.round(concreteYards * 180 * storeInfo.multiplier * 100) / 100,
     });
     
     const rebarPieces = Math.ceil(area / 16); // Rebar grid
@@ -32,7 +52,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "20 ft reinforcement bars",
       quantity: rebarPieces,
       unit: "pieces",
-      estimatedPrice: rebarPieces * 12.50,
+      estimatedPrice: Math.round(rebarPieces * 12.50 * storeInfo.multiplier * 100) / 100,
     });
   }
   
@@ -46,7 +66,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Floor joists",
     quantity: floorJoistCount,
     unit: "pieces",
-    estimatedPrice: floorJoistCount * (12.98 * Math.ceil(floorJoistLength / 10)),
+    estimatedPrice: Math.round(floorJoistCount * (12.98 * Math.ceil(floorJoistLength / 10)) * storeInfo.multiplier * 100) / 100,
   });
   
   // Rim joists (perimeter)
@@ -57,7 +77,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Rim joists",
     quantity: Math.ceil(rimJoistLinearFt / 10),
     unit: "pieces",
-    estimatedPrice: Math.ceil(rimJoistLinearFt / 10) * 12.98,
+    estimatedPrice: Math.round(Math.ceil(rimJoistLinearFt / 10) * 12.98 * storeInfo.multiplier * 100) / 100,
   });
   
   // Wall framing calculations
@@ -71,7 +91,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Wall studs",
     quantity: studCount,
     unit: "pieces",
-    estimatedPrice: studCount * (config.studSize === "2x4" ? 4.98 : 6.98),
+    estimatedPrice: Math.round(studCount * (config.studSize === "2x4" ? 4.98 : 6.98) * storeInfo.multiplier * 100) / 100,
   });
   
   // Top and bottom plates (double top plate)
@@ -82,7 +102,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Top and bottom plates",
     quantity: Math.ceil(plateLinearFt / 10),
     unit: "pieces",
-    estimatedPrice: Math.ceil(plateLinearFt / 10) * (config.studSize === "2x4" ? 4.98 : 6.98),
+    estimatedPrice: Math.round(Math.ceil(plateLinearFt / 10) * (config.studSize === "2x4" ? 4.98 : 6.98) * storeInfo.multiplier * 100) / 100,
   });
   
   // Sheathing calculations
@@ -98,7 +118,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Floor decking",
     quantity: floorSheets,
     unit: "sheets",
-    estimatedPrice: floorSheets * 24.98,
+    estimatedPrice: Math.round(floorSheets * 24.98 * storeInfo.multiplier * 100) / 100,
   });
   
   // Wall sheathing
@@ -109,7 +129,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Wall sheathing",
     quantity: wallSheets,
     unit: "sheets",
-    estimatedPrice: wallSheets * 22.98,
+    estimatedPrice: Math.round(wallSheets * 22.98 * storeInfo.multiplier * 100) / 100,
   });
   
   // Roof sheathing
@@ -120,7 +140,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Roof decking",
     quantity: roofSheets,
     unit: "sheets",
-    estimatedPrice: roofSheets * 22.98,
+    estimatedPrice: Math.round(roofSheets * 22.98 * storeInfo.multiplier * 100) / 100,
   });
   
   // Hardware calculations
@@ -131,7 +151,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Simpson Strong-Tie or equivalent",
     quantity: joistHangers,
     unit: "pieces",
-    estimatedPrice: joistHangers * 2.78,
+    estimatedPrice: Math.round(joistHangers * 2.78 * storeInfo.multiplier * 100) / 100,
   });
   
   // Joist hanger nails
@@ -141,7 +161,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Galvanized nails for joist hangers",
     quantity: 1,
     unit: "box",
-    estimatedPrice: 24.97,
+    estimatedPrice: Math.round(24.97 * storeInfo.multiplier * 100) / 100,
   });
   
   // Framing screws
@@ -152,7 +172,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Structural screws for framing",
     quantity: screwBoxes,
     unit: "boxes",
-    estimatedPrice: screwBoxes * 28.97,
+    estimatedPrice: Math.round(screwBoxes * 28.97 * storeInfo.multiplier * 100) / 100,
   });
   
   // Hurricane ties for roof
@@ -163,7 +183,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Simpson H2.5A or equivalent",
     quantity: Math.ceil(hurricaneTies / 20),
     unit: "packs",
-    estimatedPrice: Math.ceil(hurricaneTies / 20) * 18.97,
+    estimatedPrice: Math.round(Math.ceil(hurricaneTies / 20) * 18.97 * storeInfo.multiplier * 100) / 100,
   });
   
   // Roofing materials
@@ -176,7 +196,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "30-year warranty shingles",
       quantity: roofSquares,
       unit: "squares",
-      estimatedPrice: roofSquares * 135.00,
+      estimatedPrice: Math.round(roofSquares * 135.00 * storeInfo.multiplier * 100) / 100,
     });
     
     materials.push({
@@ -185,7 +205,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "Underlayment",
       quantity: roofSquares,
       unit: "rolls",
-      estimatedPrice: roofSquares * 45.00,
+      estimatedPrice: Math.round(roofSquares * 45.00 * storeInfo.multiplier * 100) / 100,
     });
   }
   
@@ -197,7 +217,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Hip and ridge shingles",
     quantity: Math.ceil(ridgeLinearFt / 20),
     unit: "bundles",
-    estimatedPrice: Math.ceil(ridgeLinearFt / 20) * 65.00,
+    estimatedPrice: Math.round(Math.ceil(ridgeLinearFt / 20) * 65.00 * storeInfo.multiplier * 100) / 100,
   });
   
   // Siding calculations
@@ -211,7 +231,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "Grooved plywood siding",
       quantity: sidingSheets,
       unit: "sheets",
-      estimatedPrice: sidingSheets * 45.00,
+      estimatedPrice: Math.round(sidingSheets * 45.00 * storeInfo.multiplier * 100) / 100,
     });
   }
   
@@ -223,7 +243,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
     description: "Corner trim and fascia",
     quantity: Math.ceil(trimLinearFt / 8),
     unit: "pieces",
-    estimatedPrice: Math.ceil(trimLinearFt / 8) * 8.97,
+    estimatedPrice: Math.round(Math.ceil(trimLinearFt / 8) * 8.97 * storeInfo.multiplier * 100) / 100,
   });
   
   // Doors and windows (basic estimates)
@@ -234,7 +254,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "Pre-hung exterior door",
       quantity: config.doorCount,
       unit: "pieces",
-      estimatedPrice: config.doorCount * 185.00,
+      estimatedPrice: Math.round(config.doorCount * 185.00 * storeInfo.multiplier * 100) / 100,
     });
   }
   
@@ -245,7 +265,7 @@ export function calculateMaterials(config: ShedConfig): MaterialCalculation[] {
       description: "Vinyl window with screen",
       quantity: config.windowCount,
       unit: "pieces",
-      estimatedPrice: config.windowCount * 125.00,
+      estimatedPrice: Math.round(config.windowCount * 125.00 * storeInfo.multiplier * 100) / 100,
     });
   }
   

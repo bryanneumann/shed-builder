@@ -19,7 +19,8 @@ export default function CostSummary({
   onGenerateShoppingList,
   onPrintPlans 
 }: CostSummaryProps) {
-  const materials = calculateMaterials(config);
+  // Use Home Depot as default for cost summary - the shopping list will show store-specific pricing
+  const materials = calculateMaterials(config, "home-depot");
   
   // Group materials by category
   const categorizedMaterials = materials.reduce((acc, material) => {
