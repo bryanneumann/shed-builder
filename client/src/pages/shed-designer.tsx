@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,13 +12,16 @@ import ConfigurationTabs from "@/components/configuration-tabs";
 import CostSummary from "@/components/cost-summary";
 import StoreAvailability from "@/components/store-availability";
 import MaterialListModal from "@/components/material-list-modal";
+import PrintLayout from "@/components/print-layout";
 import type { ShedConfig, ShedDesign } from "@shared/schema";
 
 export default function ShedDesigner() {
   const { toast } = useToast();
+  const printRef = useRef<HTMLDivElement>(null);
 
   const [zipCode, setZipCode] = useState("78704");
   const [showMaterialList, setShowMaterialList] = useState(false);
+  const [showPrintLayout, setShowPrintLayout] = useState(false);
   
   const [config, setConfig] = useState<ShedConfig>({
     name: "My Shed",
@@ -75,10 +78,19 @@ export default function ShedDesigner() {
   };
 
   const handlePrintPlans = () => {
-    window.print();
+    // Show the print layout and then trigger print
+    setShowPrintLayout(true);
+    
+    // Small delay to ensure the print layout is rendered before printing
+    setTimeout(() => {
+      window.print();
+      // Hide the print layout after printing
+      setTimeout(() => setShowPrintLayout(false), 1000);
+    }, 100);
+    
     toast({
       title: "Printing Plans",
-      description: "Opening print dialog for construction plans and material list.",
+      description: "Opening print dialog with comprehensive plans, cut list, and material list.",
     });
   };
 
@@ -227,6 +239,13 @@ export default function ShedDesigner() {
         config={config}
         zipCode={zipCode}
       />
+
+      {/* Print Layout - Hidden by default, shown only when printing */}
+      {showPrintLayout && (
+        <div style={{ position: 'absolute', left: '-9999px', top: '0' }}>
+          <PrintLayout config={config} zipCode={zipCode} />
+        </div>
+      )}
     </div>
   );
 }

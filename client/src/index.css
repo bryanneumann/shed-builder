@@ -2,6 +2,252 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Print Stylesheet */
+@media print {
+  /* Hide all non-print elements */
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-layout,
+  .print-layout * {
+    visibility: visible;
+  }
+  
+  /* Print layout positioning */
+  .print-layout {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #000;
+  }
+  
+  /* Page breaks */
+  .print-page {
+    page-break-after: always;
+    min-height: 100vh;
+    padding: 0.5in;
+    margin: 0;
+  }
+  
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+  
+  /* Header styling */
+  .print-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .print-header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    text-align: center;
+  }
+  
+  .project-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 14px;
+  }
+  
+  /* Blueprint section */
+  .blueprints-section {
+    margin-bottom: 30px;
+  }
+  
+  .blueprints-section h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+  
+  .blueprint-container {
+    border: 1px solid #000;
+    padding: 10px;
+    background: white;
+  }
+  
+  .blueprint-container svg {
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  /* Specifications */
+  .specifications {
+    margin-bottom: 30px;
+  }
+  
+  .specifications h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+  
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .spec-item {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* Cut list styling */
+  .cut-list-section {
+    margin-bottom: 30px;
+  }
+  
+  .cut-list-item {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+  }
+  
+  .cut-list-item h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background: #f0f0f0;
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .cut-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  
+  .cut-table th,
+  .cut-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: left;
+  }
+  
+  .cut-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .cut-table tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  
+  /* Material list styling */
+  .materials-section {
+    margin-bottom: 30px;
+  }
+  
+  .material-category {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+  }
+  
+  .material-category h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background: #e8e8e8;
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .material-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  
+  .material-table th,
+  .material-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: left;
+  }
+  
+  .material-table th {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .material-table tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  
+  .material-table td:nth-child(2),
+  .material-table td:nth-child(4),
+  .material-table td:nth-child(5) {
+    text-align: right;
+  }
+  
+  /* Cutting notes */
+  .cutting-notes {
+    margin-top: 30px;
+    page-break-inside: avoid;
+  }
+  
+  .cutting-notes h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .cutting-notes ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  .cutting-notes li {
+    margin-bottom: 5px;
+  }
+  
+  /* Total section */
+  .total-section {
+    margin-top: 30px;
+    border-top: 2px solid #000;
+    padding-top: 15px;
+  }
+  
+  .total-cost {
+    font-size: 18px;
+    text-align: right;
+    margin-bottom: 10px;
+  }
+  
+  .disclaimer {
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+  }
+  
+  /* Hide screen-only elements */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);
