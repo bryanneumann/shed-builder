@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Home, Save, Share2 } from "lucide-react";
+import { Home, Share2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function AppHeader() {
@@ -58,9 +58,7 @@ export default function AppHeader() {
           </nav>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <Save className="h-4 w-4" />
-            </Button>
+
             <Button size="sm">
               <Share2 className="h-4 w-4 mr-2" />
               Share
