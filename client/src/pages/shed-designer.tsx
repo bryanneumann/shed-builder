@@ -13,6 +13,7 @@ import CostSummary from "@/components/cost-summary";
 import StoreAvailability from "@/components/store-availability";
 import MaterialListModal from "@/components/material-list-modal";
 import { calculateMaterials } from "@/lib/shed-calculations";
+import { generatePlanViewSVG, generateFrontElevationSVG, generateSideElevationSVG, generateCrossSectionSVG } from "@/lib/blueprint-generator";
 import type { ShedConfig, ShedDesign } from "@shared/schema";
 
 export default function ShedDesigner() {
@@ -149,8 +150,26 @@ export default function ShedDesigner() {
           <div class="blueprints-section">
             <h2>Architectural Drawings</h2>
             <div class="blueprint-container">
-              <p style="text-align: center; font-style: italic; color: #666;">Blueprint views: Plan, Front Elevation, Side Elevation, Cross Section</p>
-              <p style="text-align: center; margin-top: 10px;">Dimensions: ${config.length}' × ${config.width}' with ${config.wallHeight}' walls</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                  <h3 style="text-align: center; margin-bottom: 10px; font-size: 14px;">PLAN VIEW</h3>
+                  ${generatePlanViewSVG(config)}
+                </div>
+                <div>
+                  <h3 style="text-align: center; margin-bottom: 10px; font-size: 14px;">FRONT ELEVATION</h3>
+                  ${generateFrontElevationSVG(config)}
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                  <h3 style="text-align: center; margin-bottom: 10px; font-size: 14px;">SIDE ELEVATION</h3>
+                  ${generateSideElevationSVG(config)}
+                </div>
+                <div>
+                  <h3 style="text-align: center; margin-bottom: 10px; font-size: 14px;">CROSS SECTION</h3>
+                  ${generateCrossSectionSVG(config)}
+                </div>
+              </div>
             </div>
           </div>
 
