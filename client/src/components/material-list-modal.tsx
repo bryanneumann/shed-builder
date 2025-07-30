@@ -30,7 +30,134 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
   };
 
   const handlePrintList = () => {
-    window.print();
+    // Create a temporary print window with just the material list
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Shopping List - ${config.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
+            h1 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            h2 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            th { background: #f5f5f5; font-weight: bold; }
+            tr:nth-child(even) { background: #f9f9f9; }
+            .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 20px; }
+            .project-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          <h1>Shopping List</h1>
+          <div class="project-info">
+            <div><strong>Project:</strong> ${config.name}</div>
+            <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
+            <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
+            <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+          </div>
+      `);
+
+      // Add lumber materials
+      if (lumberMaterials.length > 0) {
+        printWindow.document.write('<h2>Lumber & Wood Products</h2><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>');
+        lumberMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add hardware materials
+      if (hardwareMaterials.length > 0) {
+        printWindow.document.write('<h2>Hardware & Fasteners</h2><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>');
+        hardwareMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add roofing materials
+      if (roofingMaterials.length > 0) {
+        printWindow.document.write('<h2>Roofing Materials</h2><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>');
+        roofingMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add siding materials
+      if (sidingMaterials.length > 0) {
+        printWindow.document.write('<h2>Siding & Trim</h2><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>');
+        sidingMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add foundation materials
+      if (foundationMaterials.length > 0) {
+        printWindow.document.write('<h2>Foundation Materials</h2><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>');
+        foundationMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      printWindow.document.write(`
+          <div class="total">Total Estimated Cost: $${totalCost.toFixed(2)}</div>
+          <p style="font-size: 10px; color: #666; font-style: italic; margin-top: 20px;">
+            Prices are estimates based on average market rates. Actual prices may vary by location and retailer.
+          </p>
+        </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.print();
+      printWindow.close();
+    }
   };
 
   const handleExportPDF = () => {
