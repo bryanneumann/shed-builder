@@ -310,6 +310,7 @@ export default function ShedDesigner() {
               <div><strong>Project:</strong> ${config.name}</div>
               <div><strong>Estimated Total:</strong> $${totalCost.toFixed(2)}</div>
               <div><strong>Location:</strong> ${zipCode}</div>
+              <div><strong>Pricing Source:</strong> Home Depot & Lowe's Average (${new Date().toLocaleDateString()})</div>
             </div>
           </div>
 
@@ -355,7 +356,7 @@ export default function ShedDesigner() {
               <strong>Total Estimated Cost: $${totalCost.toFixed(2)}</strong>
             </div>
             <div class="disclaimer">
-              <p><em>Prices are estimates based on average market rates. Actual prices may vary by location and retailer. Always verify current pricing before purchase.</em></p>
+              <p><em>Pricing Source: Estimates based on Home Depot and Lowe's average retail prices for ZIP code ${zipCode} as of ${new Date().toLocaleDateString()}. Actual prices may vary by location, retailer, and current market conditions. Always verify current pricing before purchase.</em></p>
             </div>
           </div>
         </div>

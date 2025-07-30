@@ -57,6 +57,7 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
             <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
             <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
             <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+            <div><strong>Pricing:</strong> Home Depot & Lowe's Average</div>
           </div>
       `);
 
@@ -148,7 +149,7 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
       printWindow.document.write(`
           <div class="total">Total Estimated Cost: $${totalCost.toFixed(2)}</div>
           <p style="font-size: 10px; color: #666; font-style: italic; margin-top: 20px;">
-            Prices are estimates based on average market rates. Actual prices may vary by location and retailer.
+            Pricing Source: Estimates based on Home Depot and Lowe's average retail prices. Actual prices may vary by location and retailer.
           </p>
         </body>
         </html>
