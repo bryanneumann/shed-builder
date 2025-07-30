@@ -1,7 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ExternalLink, Printer, Download, Package, Wrench } from "lucide-react";
+import { useState } from "react";
 import type { ShedConfig } from "@shared/schema";
 import { calculateMaterials } from "@/lib/shed-calculations";
 
@@ -13,6 +15,7 @@ interface MaterialListModalProps {
 }
 
 export default function MaterialListModal({ isOpen, onClose, config, zipCode }: MaterialListModalProps) {
+  const [selectedStore, setSelectedStore] = useState<string>("home-depot");
   const materials = calculateMaterials(config);
   
   // Group materials by category
@@ -24,12 +27,19 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
 
   const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
 
-  const handleOrderFromHomeDepot = () => {
-    // Open Home Depot website or API integration
-    window.open("https://www.homedepot.com", "_blank");
+  const stores = {
+    "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
+    "lowes": { name: "Lowe's", url: "https://www.lowes.com" },
+    "menards": { name: "Menards", url: "https://www.menards.com" }
+  };
+
+  const handleOrderFromStore = () => {
+    window.open(stores[selectedStore as keyof typeof stores].url, "_blank");
   };
 
   const handlePrintList = () => {
+    const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
+    
     // Create a temporary print window with just the material list
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
@@ -51,13 +61,14 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
           </style>
         </head>
         <body>
-          <h1>Shopping List</h1>
+          <h1>Shopping List - ${selectedStoreName}</h1>
           <div class="project-info">
             <div><strong>Project:</strong> ${config.name}</div>
             <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
             <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
             <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
-            <div><strong>Pricing:</strong> Home Depot & Lowe's Average</div>
+            <div><strong>Store:</strong> ${selectedStoreName}</div>
+            <div><strong>Location:</strong> ${zipCode}</div>
           </div>
       `);
 
@@ -149,7 +160,7 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
       printWindow.document.write(`
           <div class="total">Total Estimated Cost: $${totalCost.toFixed(2)}</div>
           <p style="font-size: 10px; color: #666; font-style: italic; margin-top: 20px;">
-            Pricing Source: Estimates based on Home Depot and Lowe's average retail prices. Actual prices may vary by location and retailer.
+            Pricing estimates based on average retail prices. Please verify current pricing and availability at ${selectedStoreName} before purchase.
           </p>
         </body>
         </html>
@@ -259,19 +270,37 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
             <div className="text-2xl font-bold text-primary">${totalCost.toFixed(2)}</div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button onClick={handleOrderFromHomeDepot} className="font-medium">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Order from Home Depot
-            </Button>
-            <Button variant="outline" onClick={handlePrintList}>
-              <Printer className="h-4 w-4 mr-2" />
-              Print Shopping List
-            </Button>
-            <Button variant="outline" onClick={handleExportPDF}>
-              <Download className="h-4 w-4 mr-2" />
-              Export to PDF
-            </Button>
+          <div className="space-y-4">
+            {/* Store Selection */}
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium">Select Store:</label>
+              <Select value={selectedStore} onValueChange={setSelectedStore}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Choose a store" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="home-depot">Home Depot</SelectItem>
+                  <SelectItem value="lowes">Lowe's</SelectItem>
+                  <SelectItem value="menards">Menards</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button onClick={handleOrderFromStore} className="font-medium">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Order from {stores[selectedStore as keyof typeof stores].name}
+              </Button>
+              <Button variant="outline" onClick={handlePrintList}>
+                <Printer className="h-4 w-4 mr-2" />
+                Print Shopping List
+              </Button>
+              <Button variant="outline" onClick={handleExportPDF}>
+                <Download className="h-4 w-4 mr-2" />
+                Export to PDF
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

@@ -21,6 +21,7 @@ export default function ShedDesigner() {
 
   const [zipCode, setZipCode] = useState("78704");
   const [showMaterialList, setShowMaterialList] = useState(false);
+  const [selectedStore, setSelectedStore] = useState("home-depot");
   
   const [config, setConfig] = useState<ShedConfig>({
     name: "My Shed",
@@ -76,7 +77,15 @@ export default function ShedDesigner() {
     setShowMaterialList(true);
   };
 
+  const stores = {
+    "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
+    "lowes": { name: "Lowe's", url: "https://www.lowes.com" },
+    "menards": { name: "Menards", url: "https://www.menards.com" }
+  };
+
   const handlePrintPlans = () => {
+    const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
+    
     // Create a new window for printing with the print layout
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
@@ -310,7 +319,8 @@ export default function ShedDesigner() {
               <div><strong>Project:</strong> ${config.name}</div>
               <div><strong>Estimated Total:</strong> $${totalCost.toFixed(2)}</div>
               <div><strong>Location:</strong> ${zipCode}</div>
-              <div><strong>Pricing Source:</strong> Home Depot & Lowe's Average (${new Date().toLocaleDateString()})</div>
+              <div><strong>Store:</strong> ${selectedStoreName}</div>
+              <div><strong>Pricing Source:</strong> Average retail prices (${new Date().toLocaleDateString()})</div>
             </div>
           </div>
 
@@ -356,7 +366,7 @@ export default function ShedDesigner() {
               <strong>Total Estimated Cost: $${totalCost.toFixed(2)}</strong>
             </div>
             <div class="disclaimer">
-              <p><em>Pricing Source: Estimates based on Home Depot and Lowe's average retail prices for ZIP code ${zipCode} as of ${new Date().toLocaleDateString()}. Actual prices may vary by location, retailer, and current market conditions. Always verify current pricing before purchase.</em></p>
+              <p><em>Pricing estimates based on average retail prices. Please verify current pricing and availability at ${selectedStoreName} for ZIP code ${zipCode} before purchase. Actual prices may vary by location and current market conditions.</em></p>
             </div>
           </div>
         </div>
