@@ -11,19 +11,20 @@
   
   .print-layout,
   .print-layout * {
-    visibility: visible;
+    visibility: visible !important;
   }
   
   /* Print layout positioning */
   .print-layout {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #000;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    font-family: 'Arial', sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    background: white !important;
   }
   
   /* Page breaks */
