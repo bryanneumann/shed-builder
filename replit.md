@@ -14,6 +14,9 @@ ShedBuilder Pro is a full-stack web application for designing and pricing custom
 - Expanded roof options to 6 types: gable, gambrel, hip, shed, lean-to, and saltbox roofs
 - Updated blueprint visualizations to properly render all new roof types with construction details
 - Updated templates with the new roof styles showcasing diverse architectural options
+- Implemented comprehensive 3-page printing system with professional styling and detailed cut lists
+- Added store selection feature allowing users to choose between Home Depot, Lowe's, and Menards for pricing and ordering
+- Enhanced print output to include actual blueprint drawings and store-specific information
 
 ## User Preferences
 
