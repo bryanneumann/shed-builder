@@ -93,85 +93,9 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
   };
 
   const handlePrintComplete = () => {
-    const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
-    
-    // Create comprehensive print document with shopping list and plans
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (printWindow) {
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Complete Shed Building Package - ${config.name}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
-            h1 { text-align: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 30px; }
-            h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 8px; margin-top: 30px; page-break-before: always; }
-            h3 { color: #555; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-            th { background: #f5f5f5; font-weight: bold; }
-            tr:nth-child(even) { background: #f9f9f9; }
-            .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 20px; }
-            .project-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; background: #f8f9fa; padding: 15px; border: 1px solid #ddd; }
-          </style>
-        </head>
-        <body>
-          <h1>Complete Shed Building Package</h1>
-          <div class="project-info">
-            <div><strong>Project Name:</strong> ${config.name}</div>
-            <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
-            <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
-            <div><strong>Foundation:</strong> ${config.foundationType.charAt(0).toUpperCase() + config.foundationType.slice(1)}</div>
-            <div><strong>Wall Height:</strong> ${config.wallHeight}'</div>
-            <div><strong>Siding:</strong> ${config.sidingType.charAt(0).toUpperCase() + config.sidingType.slice(1)}</div>
-            <div><strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</div>
-            <div><strong>Store:</strong> ${selectedStoreName}</div>
-            <div><strong>Location:</strong> ${zipCode}</div>
-            <div><strong>Total Estimated Cost:</strong> $${totalCost.toFixed(2)}</div>
-          </div>
-          <h2>Shopping List - ${selectedStoreName}</h2>
-      `);
-
-      // Add materials by category
-      const materialSections = [
-        { title: "Lumber & Wood Products", materials: lumberMaterials },
-        { title: "Hardware & Fasteners", materials: hardwareMaterials },
-        { title: "Roofing Materials", materials: roofingMaterials },
-        { title: "Siding & Trim", materials: sidingMaterials },
-        { title: "Foundation Materials", materials: foundationMaterials }
-      ];
-
-      materialSections.forEach(({ title, materials }) => {
-        if (materials.length > 0) {
-          printWindow.document.write(`<h3>${title}</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>`);
-          materials.forEach(material => {
-            printWindow.document.write(`
-              <tr>
-                <td>${material.name}</td>
-                <td>${material.quantity}</td>
-                <td>${material.unit}</td>
-                <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
-                <td>$${material.estimatedPrice.toFixed(2)}</td>
-              </tr>
-            `);
-          });
-          printWindow.document.write('</table>');
-        }
-      });
-
-      printWindow.document.write(`
-        <div class="total">Total Material Cost: $${totalCost.toFixed(2)}</div>
-        <p style="font-size: 10px; color: #666; font-style: italic; margin-top: 20px;">
-          Pricing estimates based on average retail prices. Please verify current pricing and availability at ${selectedStoreName} before purchase.
-        </p>
-        </body></html>
-      `);
-      
-      printWindow.document.close();
-      printWindow.print();
-      printWindow.close();
-    }
+    // Call the parent comprehensive print function which includes everything
+    const printCompleteEvent = new CustomEvent('printComplete');
+    window.dispatchEvent(printCompleteEvent);
   };
 
   const storeNames = {
@@ -464,14 +388,273 @@ export default function ShedDesigner() {
     "menards": { name: "Menards", url: "https://www.menards.com" }
   };
 
-  // Listen for print plans event
+  // Listen for print events
   useEffect(() => {
     const handlePrintPlansEvent = () => {
       handlePrintPlans();
     };
+    const handlePrintCompleteEvent = () => {
+      handlePrintComplete();
+    };
     window.addEventListener('printPlans', handlePrintPlansEvent);
-    return () => window.removeEventListener('printPlans', handlePrintPlansEvent);
-  }, [config, zipCode]);
+    window.addEventListener('printComplete', handlePrintCompleteEvent);
+    return () => {
+      window.removeEventListener('printPlans', handlePrintPlansEvent);
+      window.removeEventListener('printComplete', handlePrintCompleteEvent);
+    };
+  }, [config, zipCode, selectedStore]);
+
+  const handlePrintComplete = () => {
+    const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
+    
+    // Create a new window for printing with the comprehensive print layout
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      // Add comprehensive styles for all pages
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Complete Shed Building Package - ${config.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 11px; line-height: 1.4; }
+            .print-page { min-height: 100vh; page-break-after: always; }
+            .print-page:last-child { page-break-after: avoid; }
+            .page-break { page-break-before: always; }
+            h1 { text-align: center; font-size: 24px; margin-bottom: 20px; border-bottom: 3px solid #000; padding-bottom: 10px; }
+            h2 { color: #333; font-size: 18px; border-bottom: 2px solid #ccc; padding-bottom: 8px; margin-top: 30px; margin-bottom: 20px; }
+            h3 { color: #555; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; margin-bottom: 15px; }
+            .print-header { margin-bottom: 30px; }
+            .project-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; background: #f8f9fa; padding: 15px; border: 1px solid #ddd; font-size: 12px; }
+            .blueprint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+            .blueprint-item { text-align: center; page-break-inside: avoid; }
+            .blueprint-item h3 { font-size: 12px; margin-bottom: 10px; text-align: center; }
+            .blueprint-item svg { max-width: 100%; height: auto; border: 1px solid #ccc; }
+            .specifications { margin-top: 30px; }
+            .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+            .spec-item { padding: 8px; background: #f9f9f9; border: 1px solid #ddd; font-size: 11px; }
+            .cut-list-section, .materials-section { margin-top: 20px; }
+            .cut-list-item { margin-bottom: 25px; page-break-inside: avoid; }
+            .cut-table, .material-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
+            .cut-table th, .cut-table td, .material-table th, .material-table td { border: 1px solid #000; padding: 6px; text-align: left; }
+            .cut-table th, .material-table th { background: #f5f5f5; font-weight: bold; }
+            .cutting-notes { margin-top: 30px; background: #fff9c4; padding: 15px; border: 1px solid #e6db74; }
+            .cutting-notes ul { margin: 10px 0; padding-left: 20px; }
+            .cutting-notes li { margin-bottom: 5px; }
+            .material-category { margin-bottom: 25px; page-break-inside: avoid; }
+            .total-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid #333; }
+            .total-cost { font-size: 16px; font-weight: bold; text-align: right; margin-bottom: 15px; }
+            .disclaimer { font-size: 9px; color: #666; font-style: italic; text-align: center; }
+            @media print {
+              body { margin: 0; padding: 15px; }
+              .print-page { min-height: auto; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-page">
+            <div class="print-header">
+              <h1>Complete Shed Building Package</h1>
+              <div class="project-info">
+                <div><strong>Project Name:</strong> ${config.name}</div>
+                <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
+                <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
+                <div><strong>Foundation:</strong> ${config.foundationType.charAt(0).toUpperCase() + config.foundationType.slice(1)}</div>
+                <div><strong>Wall Height:</strong> ${config.wallHeight}'</div>
+                <div><strong>Siding:</strong> ${config.sidingType.charAt(0).toUpperCase() + config.sidingType.slice(1)}</div>
+                <div><strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</div>
+                <div><strong>Store:</strong> ${selectedStoreName}</div>
+                <div><strong>Location:</strong> ${zipCode}</div>
+                <div><strong>Total Estimated Cost:</strong> $${materials.reduce((sum, material) => sum + material.estimatedPrice, 0).toFixed(2)}</div>
+              </div>
+            </div>
+
+            <h2>Blueprint Plans</h2>
+            <div class="blueprint-grid">
+              <div class="blueprint-item">
+                <h3>PLAN VIEW</h3>
+                ${generatePlanViewSVG(config)}
+              </div>
+              <div class="blueprint-item">
+                <h3>FRONT ELEVATION</h3>
+                ${generateFrontElevationSVG(config)}
+              </div>
+              <div class="blueprint-item">
+                <h3>SIDE ELEVATION</h3>
+                ${generateSideElevationSVG(config)}
+              </div>
+              <div class="blueprint-item">
+                <h3>CROSS SECTION</h3>
+                ${generateCrossSectionSVG(config)}
+              </div>
+            </div>
+          </div>
+
+          <div class="specifications">
+            <h2>Specifications</h2>
+            <div class="spec-grid">
+              <div class="spec-item"><strong>Foundation Type:</strong> ${config.foundationType.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Lumber Grade:</strong> ${config.lumberGrade.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Joist Spacing:</strong> ${config.joistSpacing}" O.C.</div>
+              <div class="spec-item"><strong>Stud Size:</strong> ${config.studSize}</div>
+              <div class="spec-item"><strong>Wall Height:</strong> ${config.wallHeight}'</div>
+              <div class="spec-item"><strong>Doors:</strong> ${config.doorCount}</div>
+              <div class="spec-item"><strong>Windows:</strong> ${config.windowCount}</div>
+              <div class="spec-item"><strong>Siding:</strong> ${config.sidingType.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Roofing:</strong> ${config.roofingType.replace('-', ' ')}</div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      // Add Page 2: Cut List
+      const studCount = Math.ceil((config.length + config.width) * 2 / 1.33);
+      const joistCount = Math.ceil(config.length * 12 / config.joistSpacing) + 1;
+      
+      printWindow.document.write(`
+        <div class="print-page page-break">
+          <div class="print-header">
+            <h1>Lumber Cut List</h1>
+            <div class="project-info">
+              <div><strong>Project:</strong> ${config.name}</div>
+              <div><strong>Cut Date:</strong> ${new Date().toLocaleDateString()}</div>
+            </div>
+          </div>
+
+          <div class="cut-list-section">
+            <div class="cut-list-item">
+              <h3>2x4 Wall Studs</h3>
+              <table class="cut-table">
+                <thead>
+                  <tr><th>Length</th><th>Quantity</th><th>Purpose</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>${config.wallHeight}'</td><td>${studCount}</td><td>Wall studs (16" O.C.)</td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cut-list-item">
+              <h3>2x4 Top/Bottom Plates</h3>
+              <table class="cut-table">
+                <thead>
+                  <tr><th>Length</th><th>Quantity</th><th>Purpose</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>${config.length}'</td><td>4</td><td>Front/back plates</td><td></td></tr>
+                  <tr><td>${config.width - 3.5/12}'</td><td>4</td><td>Side plates</td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cut-list-item">
+              <h3>2x8 Floor Joists</h3>
+              <table class="cut-table">
+                <thead>
+                  <tr><th>Length</th><th>Quantity</th><th>Purpose</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>${config.width}'</td><td>${joistCount}</td><td>Floor joists (${config.joistSpacing}" O.C.)</td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cutting-notes">
+              <h3>Cutting Notes</h3>
+              <ul>
+                <li>Always measure twice, cut once</li>
+                <li>Mark all pieces clearly before cutting</li>
+                <li>Use proper safety equipment when cutting</li>
+                <li>Double-check measurements against plans</li>
+                <li>Account for kerf (blade width) when cutting</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `);
+
+      // Add Page 3: Material List
+      const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
+      const materialCategories = [
+        { name: 'Lumber & Wood Products', materials: lumberMaterials },
+        { name: 'Hardware & Fasteners', materials: hardwareMaterials },
+        { name: 'Roofing Materials', materials: roofingMaterials },
+        { name: 'Siding & Trim', materials: sidingMaterials },
+        { name: 'Foundation Materials', materials: foundationMaterials }
+      ];
+
+      printWindow.document.write(`
+        <div class="print-page page-break">
+          <div class="print-header">
+            <h1>Material Shopping List</h1>
+            <div class="project-info">
+              <div><strong>Project:</strong> ${config.name}</div>
+              <div><strong>Estimated Total:</strong> $${totalCost.toFixed(2)}</div>
+              <div><strong>Location:</strong> ${zipCode}</div>
+              <div><strong>Store:</strong> ${selectedStoreName}</div>
+              <div><strong>Pricing Source:</strong> Average retail prices (${new Date().toLocaleDateString()})</div>
+            </div>
+          </div>
+
+          <div class="materials-section">
+      `);
+
+      materialCategories.forEach(category => {
+        if (category.materials.length > 0) {
+          printWindow.document.write(`
+            <div class="material-category">
+              <h2>${category.name}</h2>
+              <table class="material-table">
+                <thead>
+                  <tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Est. Price</th><th>Total</th></tr>
+                </thead>
+                <tbody>
+          `);
+          
+          category.materials.forEach(material => {
+            printWindow.document.write(`
+              <tr>
+                <td>${material.name}</td>
+                <td>${material.quantity}</td>
+                <td>${material.unit}</td>
+                <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+                <td>$${material.estimatedPrice.toFixed(2)}</td>
+              </tr>
+            `);
+          });
+          
+          printWindow.document.write(`
+                </tbody>
+              </table>
+            </div>
+          `);
+        }
+      });
+
+      printWindow.document.write(`
+          </div>
+          <div class="total-section">
+            <div class="total-cost">
+              <strong>Total Estimated Cost: $${totalCost.toFixed(2)}</strong>
+            </div>
+            <div class="disclaimer">
+              <p><em>Pricing estimates based on average retail prices. Please verify current pricing and availability at ${selectedStoreName} for ZIP code ${zipCode} before purchase. Actual prices may vary by location and current market conditions.</em></p>
+            </div>
+          </div>
+        </div>
+      `);
+
+      printWindow.document.write(`</body></html>`);
+      printWindow.document.close();
+      printWindow.print();
+      printWindow.close();
+    }
+
+    toast({
+      title: "Printing Complete Package",
+      description: "Opening print dialog with blueprints, cut list, and shopping list.",
+    });
+  };
 
   const handlePrintPlans = () => {
     const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
