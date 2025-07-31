@@ -199,9 +199,228 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
     }
   };
 
-  const handleExportPDF = () => {
-    // PDF export functionality would go here
-    console.log("Export to PDF");
+  const handlePrintComplete = () => {
+    const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
+    
+    // Create comprehensive print document with shopping list and plans
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Complete Shed Building Package - ${config.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
+            h1 { text-align: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 30px; }
+            h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 8px; margin-top: 30px; page-break-before: always; }
+            h3 { color: #555; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+            th { background: #f5f5f5; font-weight: bold; }
+            tr:nth-child(even) { background: #f9f9f9; }
+            .total { font-size: 16px; font-weight: bold; text-align: right; margin-top: 20px; }
+            .project-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; background: #f8f9fa; padding: 15px; border: 1px solid #ddd; }
+            .blueprint-section { margin-top: 40px; text-align: center; }
+            .blueprint-views { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+            .blueprint-view { border: 2px solid #333; padding: 15px; background: white; }
+            .view-title { font-weight: bold; margin-bottom: 10px; text-decoration: underline; }
+            .dimension-note { font-size: 10px; color: #666; margin-top: 10px; }
+            .page-break { page-break-before: always; }
+            @media print {
+              body { margin: 0; }
+              .page-break { page-break-before: always; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Complete Shed Building Package</h1>
+          
+          <!-- Project Overview -->
+          <div class="project-info">
+            <div><strong>Project Name:</strong> ${config.name}</div>
+            <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
+            <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
+            <div><strong>Foundation:</strong> ${config.foundationType.charAt(0).toUpperCase() + config.foundationType.slice(1)}</div>
+            <div><strong>Wall Height:</strong> ${config.wallHeight}'</div>
+            <div><strong>Siding:</strong> ${config.sidingType.charAt(0).toUpperCase() + config.sidingType.slice(1)}</div>
+            <div><strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</div>
+            <div><strong>Store:</strong> ${selectedStoreName}</div>
+            <div><strong>Location:</strong> ${zipCode}</div>
+            <div><strong>Total Estimated Cost:</strong> $${totalCost.toFixed(2)}</div>
+          </div>
+
+          <!-- Shopping List Section -->
+          <h2>Shopping List - ${selectedStoreName}</h2>
+      `);
+
+      // Add lumber materials
+      if (lumberMaterials.length > 0) {
+        printWindow.document.write('<h3>Lumber & Wood Products</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>');
+        lumberMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add hardware materials
+      if (hardwareMaterials.length > 0) {
+        printWindow.document.write('<h3>Hardware & Fasteners</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>');
+        hardwareMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add roofing materials
+      if (roofingMaterials.length > 0) {
+        printWindow.document.write('<h3>Roofing Materials</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>');
+        roofingMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add siding materials
+      if (sidingMaterials.length > 0) {
+        printWindow.document.write('<h3>Siding & Trim</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>');
+        sidingMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add foundation materials
+      if (foundationMaterials.length > 0) {
+        printWindow.document.write('<h3>Foundation Materials</h3><table><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total Price</th></tr>');
+        foundationMaterials.forEach(material => {
+          printWindow.document.write(`
+            <tr>
+              <td>${material.name}</td>
+              <td>${material.quantity}</td>
+              <td>${material.unit}</td>
+              <td>$${(material.estimatedPrice / material.quantity).toFixed(2)}</td>
+              <td>$${material.estimatedPrice.toFixed(2)}</td>
+            </tr>
+          `);
+        });
+        printWindow.document.write('</table>');
+      }
+
+      // Add total cost summary
+      printWindow.document.write(`
+        <div class="total">Total Material Cost: $${totalCost.toFixed(2)}</div>
+        
+        <!-- Blueprint Plans Section -->
+        <div class="page-break">
+          <h2>Construction Plans & Blueprints</h2>
+          
+          <div class="blueprint-section">
+            <h3>Architectural Views</h3>
+            <div class="blueprint-views">
+              <div class="blueprint-view">
+                <div class="view-title">Plan View (Top Down)</div>
+                <div style="height: 200px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                  ${config.length}' × ${config.width}' Floor Plan<br/>
+                  ${config.foundationType.charAt(0).toUpperCase() + config.foundationType.slice(1)} Foundation<br/>
+                  Floor Plan Layout
+                </div>
+                <div class="dimension-note">Scale: 1/4" = 1' • Overall dimensions: ${config.length}' × ${config.width}'</div>
+              </div>
+              
+              <div class="blueprint-view">
+                <div class="view-title">Front Elevation</div>
+                <div style="height: 200px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                  ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof<br/>
+                  ${config.wallHeight}' Wall Height<br/>
+                  ${config.sidingType.charAt(0).toUpperCase() + config.sidingType.slice(1)} Siding
+                </div>
+                <div class="dimension-note">Scale: 1/4" = 1' • Wall height: ${config.wallHeight}' • Width: ${config.width}'</div>
+              </div>
+              
+              <div class="blueprint-view">
+                <div class="view-title">Side Elevation</div>
+                <div style="height: 200px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                  ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof Profile<br/>
+                  ${config.wallHeight}' Wall Height<br/>
+                  ${config.length}' Length
+                </div>
+                <div class="dimension-note">Scale: 1/4" = 1' • Length: ${config.length}' • Wall height: ${config.wallHeight}'</div>
+              </div>
+              
+              <div class="blueprint-view">
+                <div class="view-title">Cross Section</div>
+                <div style="height: 200px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                  Interior View<br/>
+                  Floor Joists • Wall Studs<br/>
+                  Roof Structure
+                </div>
+                <div class="dimension-note">Scale: 1/4" = 1' • Interior height: ${config.wallHeight}' • Construction details</div>
+              </div>
+            </div>
+          </div>
+          
+          <h3>Construction Specifications</h3>
+          <table>
+            <tr><th>Component</th><th>Specification</th><th>Notes</th></tr>
+            <tr><td>Foundation</td><td>${config.foundationType.charAt(0).toUpperCase() + config.foundationType.slice(1)}</td><td>Level and square foundation required</td></tr>
+            <tr><td>Floor Framing</td><td>2x8 joists @ 16" O.C.</td><td>Pressure treated lumber recommended</td></tr>
+            <tr><td>Wall Framing</td><td>2x4 studs @ 16" O.C.</td><td>Include corner bracing as required</td></tr>
+            <tr><td>Roof Framing</td><td>${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} style</td><td>2x6 rafters @ 24" O.C.</td></tr>
+            <tr><td>Siding</td><td>${config.sidingType.charAt(0).toUpperCase() + config.sidingType.slice(1)}</td><td>Install per manufacturer specifications</td></tr>
+            <tr><td>Roofing</td><td>Architectural shingles</td><td>Install proper underlayment</td></tr>
+          </table>
+          
+          <div style="margin-top: 30px; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 15px;">
+            <p><strong>Important Notes:</strong></p>
+            <ul>
+              <li>Verify all local building codes and permit requirements before construction</li>
+              <li>All lumber should be properly graded and suitable for structural use</li>
+              <li>Foundation must be level, square, and properly sized</li>
+              <li>Follow manufacturer installation instructions for all materials</li>
+              <li>Pricing estimates are subject to market fluctuations and store availability</li>
+            </ul>
+          </div>
+        </div>
+      `);
+      
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+      printWindow.close();
+    }
   };
 
   return (
@@ -332,18 +551,14 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
           </div>
           
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button onClick={handleOrderFromStore} className="font-medium">
               <ExternalLink className="h-4 w-4 mr-2" />
               Order from {stores[selectedStore as keyof typeof stores].name}
             </Button>
-            <Button variant="outline" onClick={handlePrintList}>
+            <Button onClick={handlePrintComplete} className="font-medium">
               <Printer className="h-4 w-4 mr-2" />
-              Print Shopping List
-            </Button>
-            <Button variant="outline" onClick={handleExportPDF}>
-              <Download className="h-4 w-4 mr-2" />
-              Export to PDF
+              Print Complete Package
             </Button>
           </div>
         </div>
