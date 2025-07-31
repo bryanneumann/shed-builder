@@ -967,22 +967,42 @@ export default function ShedDesigner() {
     });
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     // Generate shareable link
     const shareUrl = `${window.location.origin}?config=${encodeURIComponent(JSON.stringify(config))}`;
     
-    if (navigator.share) {
-      navigator.share({
-        title: "ShedBuilder Pro - My Shed Design",
-        text: `Check out my ${config.length}×${config.width} shed design!`,
-        url: shareUrl,
-      });
-    } else {
-      navigator.clipboard.writeText(shareUrl);
-      toast({
-        title: "Link Copied",
-        description: "Share link has been copied to your clipboard.",
-      });
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "ShedBuilder Pro - My Shed Design",
+          text: `Check out my ${config.length}×${config.width} shed design!`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: "Link Copied",
+          description: "Share link has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      // Handle share cancellation or other errors silently
+      if (error instanceof Error && error.name !== 'AbortError') {
+        // Fallback to clipboard copy if share API fails
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          toast({
+            title: "Link Copied",
+            description: "Share link has been copied to your clipboard.",
+          });
+        } catch (clipboardError) {
+          toast({
+            title: "Share Failed",
+            description: "Unable to share or copy link.",
+            variant: "destructive",
+          });
+        }
+      }
     }
   };
 
