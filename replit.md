@@ -7,7 +7,7 @@ ShedBuilder Pro is a full-stack web application for designing and pricing custom
 ## Recent Changes (January 2025)
 
 - Removed isometric 3D view in favor of blueprint-only visualizations (4 architectural views: Plan, Front Elevation, Side Elevation, Cross Section)
-- Implemented full navigation system with Templates, Materials, and Designer pages  
+- Implemented full navigation system with Templates and Designer pages (Materials tab removed per user preference)
 - Removed Help tab and all help content per user preference for cleaner interface
 - Fixed navigation routing and component interface issues
 - Enhanced blueprint visualizations with construction details (studs, joists, dimensions)
@@ -17,6 +17,7 @@ ShedBuilder Pro is a full-stack web application for designing and pricing custom
 - Implemented comprehensive 3-page printing system with professional styling and detailed cut lists
 - Added store selection feature allowing users to choose between Home Depot, Lowe's, and Menards for pricing and ordering
 - Enhanced print output to include actual blueprint drawings and store-specific information
+- **Shopping List Revolution (Latest)**: Completely integrated shopping list into main designer page with automatic updates, removed separate Materials tab, embedded price comparison tools with store filtering table, and eliminated all manual "Generate" buttons for seamless user experience
 
 ## User Preferences
 

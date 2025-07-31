@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { calculateMaterials } from "@/lib/shed-calculations";
-import { Package, Wrench, ExternalLink, Printer } from "lucide-react";
+import { Package, Wrench, ExternalLink, Printer, BarChart3, Filter } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import Shed3DViewer from "@/components/shed-3d-viewer";
@@ -55,12 +55,15 @@ function MaterialItem({ material, selectedStore }: { material: any; selectedStor
   );
 }
 
-// Full Shopping List Component
+// Full Shopping List Component with Price Comparison
 function FullShoppingList({ config, selectedStore, zipCode }: { 
   config: ShedConfig; 
   selectedStore: string; 
   zipCode: string 
 }) {
+  const [showPriceComparison, setShowPriceComparison] = useState(false);
+  const [compareStores, setCompareStores] = useState(["home-depot", "lowes", "menards"]);
+  
   const materials = calculateMaterials(config, selectedStore);
   
   // Group materials by category
@@ -71,6 +74,13 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
   const foundationMaterials = materials.filter(m => m.category === "foundation");
 
   const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
+
+  // Calculate prices for all stores for comparison
+  const allStorePrices = {
+    "home-depot": calculateMaterials(config, "home-depot").reduce((sum, m) => sum + m.estimatedPrice, 0),
+    "lowes": calculateMaterials(config, "lowes").reduce((sum, m) => sum + m.estimatedPrice, 0),
+    "menards": calculateMaterials(config, "menards").reduce((sum, m) => sum + m.estimatedPrice, 0)
+  };
 
   const stores = {
     "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
@@ -164,8 +174,103 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
     }
   };
 
+  const storeNames = {
+    "home-depot": "Home Depot",
+    "lowes": "Lowe's", 
+    "menards": "Menards"
+  };
+
+  const handleStoreToggle = (store: string) => {
+    setCompareStores(prev => 
+      prev.includes(store) 
+        ? prev.filter(s => s !== store)
+        : [...prev, store]
+    );
+  };
+
   return (
     <div className="space-y-6">
+      {/* Price Comparison Toggle */}
+      <div className="flex items-center justify-between">
+        <h4 className="font-medium text-neutral-900">Material Details</h4>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPriceComparison(!showPriceComparison)}
+        >
+          <BarChart3 className="h-4 w-4 mr-2" />
+          {showPriceComparison ? "Hide" : "Compare"} Prices
+        </Button>
+      </div>
+
+      {/* Store Price Comparison Table */}
+      {showPriceComparison && (
+        <div className="bg-neutral-50 p-4 rounded-lg border">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-neutral-600" />
+              <span className="text-sm font-medium text-neutral-700">Compare Stores:</span>
+            </div>
+            {Object.entries(storeNames).map(([store, name]) => (
+              <label key={store} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={compareStores.includes(store)}
+                  onChange={() => handleStoreToggle(store)}
+                  className="rounded"
+                />
+                {name}
+              </label>
+            ))}
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 font-medium">Store</th>
+                  <th className="text-right py-2 font-medium">Total Cost</th>
+                  <th className="text-right py-2 font-medium">Savings</th>
+                  <th className="text-center py-2 font-medium">Best Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compareStores.map(store => {
+                  const cost = allStorePrices[store as keyof typeof allStorePrices];
+                  const minCost = Math.min(...Object.values(allStorePrices));
+                  const savings = cost - minCost;
+                  const isBest = cost === minCost;
+                  
+                  return (
+                    <tr key={store} className={`border-b ${isBest ? 'bg-green-50' : ''}`}>
+                      <td className="py-2 font-medium">
+                        {storeNames[store as keyof typeof storeNames]}
+                        <div className="text-xs text-neutral-500">
+                          {store === "home-depot" ? "South Austin (3.2 mi)" : 
+                           store === "lowes" ? "Sunset Valley (4.7 mi)" : 
+                           "Cedar Park (18.3 mi)"}
+                        </div>
+                      </td>
+                      <td className="py-2 text-right font-bold">${cost.toFixed(2)}</td>
+                      <td className="py-2 text-right">
+                        {savings > 0 ? (
+                          <span className="text-red-600">+${savings.toFixed(2)}</span>
+                        ) : (
+                          <span className="text-green-600">$0.00</span>
+                        )}
+                      </td>
+                      <td className="py-2 text-center">
+                        {isBest && <Badge className="bg-green-600 text-white">Best</Badge>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Lumber Section */}
         {lumberMaterials.length > 0 && (
