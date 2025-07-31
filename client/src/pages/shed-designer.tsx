@@ -38,12 +38,12 @@ function MaterialItem({ material, selectedStore }: { material: any; selectedStor
         <div className="font-medium text-sm">{material.name}</div>
         <div className="text-xs text-neutral-500">SKU: {stores[selectedStore as keyof typeof stores].skuPrefix || "HD"}{Math.floor(Math.random() * 900000) + 100000} • {stores[selectedStore as keyof typeof stores].name}</div>
         {inStock ? (
-          <Badge variant={isLimitedStock ? "secondary" : "default"} className={isLimitedStock ? "bg-warning text-white" : "bg-success text-white"}>
-            {isLimitedStock ? "⚠ Limited stock" : "✓ In stock"} - {stockCount} available
+          <Badge variant={isLimitedStock ? "secondary" : "default"} className={isLimitedStock ? "bg-orange-100 text-orange-800 border-orange-200" : "bg-green-100 text-green-800 border-green-200"}>
+            {isLimitedStock ? "Limited stock" : "In stock"} - {stockCount} available
           </Badge>
         ) : (
-          <Badge variant="destructive">
-            ✗ Out of stock
+          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+            Out of stock
           </Badge>
         )}
       </div>
@@ -1027,11 +1027,11 @@ export default function ShedDesigner() {
         </div>
       </header>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-6">
           
           {/* Main Design Panel */}
-          <div className="lg:col-span-8">
+          <div>
             <div className="bg-white rounded-lg shadow-material p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-medium text-neutral-900">Shed Designer</h2>
@@ -1124,13 +1124,8 @@ export default function ShedDesigner() {
             </div>
           </div>
           
-          {/* Side Panel */}
-          <div className="lg:col-span-4 space-y-6">
-            
-
-            
-            {/* Complete Shopping List */}
-            <div className="bg-white rounded-lg shadow-material p-6">
+          {/* Shopping List Section */}
+          <div className="bg-white rounded-lg shadow-material p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-medium text-neutral-900">
                   Shopping List - {config.length}×{config.width} {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof Shed
@@ -1216,17 +1211,10 @@ export default function ShedDesigner() {
               </div>
             </div>
             
-            {/* Store Availability */}
-            <StoreAvailability zipCode={zipCode} />
-            
-
-          </div>
+          {/* Store Availability */}
+          <StoreAvailability zipCode={zipCode} />
         </div>
       </div>
-
-
-
-
     </div>
   );
 }
