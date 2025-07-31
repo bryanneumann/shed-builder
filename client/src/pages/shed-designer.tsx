@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,20 @@ export default function ShedDesigner() {
   const { toast } = useToast();
 
   const [zipCode, setZipCode] = useState("78704");
+
+  // Load saved zip code on component mount
+  useEffect(() => {
+    const savedZipCode = localStorage.getItem("shedbuilder-zipcode");
+    if (savedZipCode) {
+      setZipCode(savedZipCode);
+    }
+  }, []);
+
+  // Save zip code whenever it changes
+  const handleZipCodeChange = (newZipCode: string) => {
+    setZipCode(newZipCode);
+    localStorage.setItem("shedbuilder-zipcode", newZipCode);
+  };
   const [showMaterialList, setShowMaterialList] = useState(false);
   const [selectedStore, setSelectedStore] = useState("home-depot");
   
@@ -513,7 +527,7 @@ export default function ShedDesigner() {
             <CostSummary
               config={config}
               zipCode={zipCode}
-              onZipCodeChange={setZipCode}
+              onZipCodeChange={handleZipCodeChange}
               onGenerateShoppingList={handleGenerateShoppingList}
               onPrintPlans={handlePrintPlans}
             />

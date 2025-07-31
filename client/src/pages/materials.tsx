@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,20 @@ export default function Materials() {
   const [zipCode, setZipCode] = useState("78704");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("all");
+
+  // Load saved zip code on component mount
+  useEffect(() => {
+    const savedZipCode = localStorage.getItem("shedbuilder-zipcode");
+    if (savedZipCode) {
+      setZipCode(savedZipCode);
+    }
+  }, []);
+
+  // Save zip code whenever it changes
+  const handleZipCodeChange = (newZipCode: string) => {
+    setZipCode(newZipCode);
+    localStorage.setItem("shedbuilder-zipcode", newZipCode);
+  };
 
   // Sample material data - in a real app this would come from the database
   const materials = [
@@ -151,7 +165,7 @@ export default function Materials() {
                 type="text"
                 placeholder="78704"
                 value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                onChange={(e) => handleZipCodeChange(e.target.value)}
               />
             </div>
           </div>
