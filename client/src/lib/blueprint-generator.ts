@@ -3,8 +3,8 @@ import type { ShedConfig } from '@shared/schema';
 export function generatePlanViewSVG(config: ShedConfig): string {
   const { length, width, doorCount, windowCount } = config;
   
-  // Larger scale factor for bigger blueprints (pixels per foot)
-  const scale = 40;
+  // Balanced scale factor for readable blueprints (pixels per foot)
+  const scale = 25;
   const wallThickness = 6; // 6" walls
   
   const totalWidth = width * scale + wallThickness * 2;
@@ -42,7 +42,7 @@ export function generatePlanViewSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 300} ${totalHeight + 250}" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} ${totalHeight + 200}" style="width: 100%; height: 450px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -172,7 +172,7 @@ export function generatePlanViewSVG(config: ShedConfig): string {
 }
 
 export function generateFrontElevationSVG(config: ShedConfig): string {
-  const scale = 40;
+  const scale = 25;
   const wallHeight = config.wallHeight;
   const totalWidth = config.length * scale;
   const totalHeight = wallHeight * scale;
@@ -185,7 +185,7 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
   }
   
   return `
-    <svg viewBox="0 0 ${totalWidth + 300} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 250} 250" style="width: 100%; height: 350px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -337,14 +337,14 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">FRONT ELEVATION</text>
-      <text x="${(totalWidth + 300)/2}" y="280" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
+      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">FRONT ELEVATION</text>
+      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
     </svg>
   `;
 }
 
 export function generateSideElevationSVG(config: ShedConfig): string {
-  const scale = 40;
+  const scale = 25;
   const wallHeight = config.wallHeight;
   const totalWidth = config.width * scale;
   const totalHeight = wallHeight * scale;
@@ -357,7 +357,7 @@ export function generateSideElevationSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 300} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 250} 250" style="width: 100%; height: 350px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -471,14 +471,14 @@ export function generateSideElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">SIDE ELEVATION</text>
-      <text x="${(totalWidth + 300)/2}" y="280" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
+      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">SIDE ELEVATION</text>
+      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
     </svg>
   `;
 }
 
 export function generateCrossSectionSVG(config: ShedConfig): string {
-  const scale = 40;
+  const scale = 25;
   const wallHeight = config.wallHeight;
   const totalWidth = config.width * scale;
   const totalHeight = wallHeight * scale;
@@ -491,7 +491,7 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 300} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 250} 240" style="width: 100%; height: 350px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -552,71 +552,69 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
       </g>
       
       <!-- Cross Section Construction Reference -->
-      <g transform="translate(${totalWidth + 120}, 50)">
-        <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">CROSS SECTION FRAMING</text>
+      <g transform="translate(${totalWidth + 100}, 40)">
+        <text x="0" y="0" font-size="14" font-weight="bold" fill="#000">CROSS SECTION FRAMING</text>
         
         <!-- Floor joist detail -->
         <g transform="translate(0, 20)">
-          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Floor Joist Layout:</text>
-          <rect x="0" y="10" width="80" height="60" fill="none" stroke="#000" stroke-width="1"/>
+          <text x="0" y="0" font-size="12" font-weight="bold" fill="#333">Floor Joist Layout:</text>
+          <rect x="0" y="8" width="60" height="45" fill="none" stroke="#000" stroke-width="1"/>
           
           <!-- Foundation -->
-          <rect x="0" y="55" width="80" height="15" fill="#9ca3af"/>
-          <text x="85" y="65" font-size="10" fill="#000">Concrete Foundation</text>
+          <rect x="0" y="42" width="60" height="11" fill="#9ca3af"/>
+          <text x="65" y="50" font-size="9" fill="#000">Foundation</text>
           
           <!-- Sill plates -->
-          <rect x="0" y="50" width="10" height="5" fill="#654321"/>
-          <rect x="70" y="50" width="10" height="5" fill="#654321"/>
-          <text x="85" y="55" font-size="10" fill="#000">Sill Plates (2×6)</text>
+          <rect x="0" y="38" width="8" height="4" fill="#654321"/>
+          <rect x="52" y="38" width="8" height="4" fill="#654321"/>
+          <text x="65" y="42" font-size="9" fill="#000">Sill Plates</text>
           
           <!-- Floor joists -->
-          <rect x="10" y="50" width="3" height="15" fill="#8B4513"/>
-          <rect x="23" y="50" width="3" height="15" fill="#8B4513"/>
-          <rect x="36" y="50" width="3" height="15" fill="#8B4513"/>
-          <rect x="49" y="50" width="3" height="15" fill="#8B4513"/>
-          <rect x="62" y="50" width="3" height="15" fill="#8B4513"/>
-          <text x="85" y="45" font-size="10" fill="#000">2×8 Joists @ 16" O.C.</text>
+          <rect x="8" y="38" width="2" height="11" fill="#8B4513"/>
+          <rect x="18" y="38" width="2" height="11" fill="#8B4513"/>
+          <rect x="28" y="38" width="2" height="11" fill="#8B4513"/>
+          <rect x="38" y="38" width="2" height="11" fill="#8B4513"/>
+          <rect x="48" y="38" width="2" height="11" fill="#8B4513"/>
+          <text x="65" y="33" font-size="9" fill="#000">2×8 @ 16" O.C.</text>
           
           <!-- Subfloor -->
-          <rect x="0" y="45" width="80" height="5" fill="#fbbf24"/>
-          <text x="85" y="50" font-size="10" fill="#000">3/4" Plywood Subfloor</text>
+          <rect x="0" y="34" width="60" height="4" fill="#fbbf24"/>
+          <text x="65" y="38" font-size="9" fill="#000">3/4" Subfloor</text>
         </g>
         
         <!-- Wall construction -->
-        <g transform="translate(0, 110)">
-          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Wall Construction:</text>
-          <rect x="0" y="10" width="15" height="60" fill="none" stroke="#000" stroke-width="1"/>
+        <g transform="translate(0, 80)">
+          <text x="0" y="0" font-size="12" font-weight="bold" fill="#333">Wall Construction:</text>
+          <rect x="0" y="8" width="12" height="45" fill="none" stroke="#000" stroke-width="1"/>
           
           <!-- Top plate -->
-          <rect x="0" y="10" width="15" height="5" fill="#654321"/>
-          <text x="20" y="18" font-size="10" fill="#000">Double Top Plate (2×4)</text>
+          <rect x="0" y="8" width="12" height="4" fill="#654321"/>
+          <text x="17" y="15" font-size="9" fill="#000">Double Top Plate</text>
           
           <!-- Studs -->
-          <rect x="2" y="15" width="3" height="50" fill="#8B4513"/>
-          <rect x="8" y="15" width="3" height="50" fill="#8B4513"/>
-          <text x="20" y="35" font-size="10" fill="#000">Wall Studs (2×4)</text>
-          <text x="20" y="45" font-size="10" fill="#000">@ 16" O.C.</text>
+          <rect x="2" y="12" width="2" height="37" fill="#8B4513"/>
+          <rect x="6" y="12" width="2" height="37" fill="#8B4513"/>
+          <text x="17" y="25" font-size="9" fill="#000">2×4 Studs @ 16" O.C.</text>
           
           <!-- Bottom plate -->
-          <rect x="0" y="65" width="15" height="5" fill="#654321"/>
-          <text x="20" y="72" font-size="10" fill="#000">Bottom Plate (2×4)</text>
+          <rect x="0" y="49" width="12" height="4" fill="#654321"/>
+          <text x="17" y="53" font-size="9" fill="#000">Bottom Plate</text>
         </g>
         
         <!-- Roof structure -->
-        <g transform="translate(0, 190)">
-          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Roof Structure:</text>
-          <text x="0" y="15" font-size="12" font-weight="bold" fill="#333">${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof:</text>
+        <g transform="translate(0, 140)">
+          <text x="0" y="0" font-size="12" font-weight="bold" fill="#333">Roof Structure:</text>
+          <text x="0" y="12" font-size="11" font-weight="bold" fill="#333">${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof:</text>
           
-          <text x="0" y="30" font-size="10" fill="#000">• 2×6 rafters @ 24" O.C.</text>
-          <text x="0" y="42" font-size="10" fill="#000">• Ridge beam or board</text>
-          <text x="0" y="54" font-size="10" fill="#000">• Ceiling joists @ 16" O.C.</text>
-          <text x="0" y="66" font-size="10" fill="#000">• Hurricane ties required</text>
+          <text x="0" y="24" font-size="9" fill="#000">• 2×6 rafters @ 24" O.C.</text>
+          <text x="0" y="34" font-size="9" fill="#000">• Ridge beam/board</text>
+          <text x="0" y="44" font-size="9" fill="#000">• Ceiling joists @ 16" O.C.</text>
         </g>
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">CROSS SECTION</text>
-      <text x="${(totalWidth + 300)/2}" y="280" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
+      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">CROSS SECTION</text>
+      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
     </svg>
   `;
 }
