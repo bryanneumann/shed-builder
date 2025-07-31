@@ -42,7 +42,7 @@ export function generatePlanViewSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 350} ${totalHeight + 200}" style="width: 100%; height: 450px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 450} ${totalHeight + 250}" style="width: 100%; height: 500px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -129,7 +129,7 @@ export function generatePlanViewSVG(config: ShedConfig): string {
       </g>
       
       <!-- 2x4 Layout Reference -->
-      <g transform="translate(${totalWidth + 120}, 80)">
+      <g transform="translate(${totalWidth + 150}, 80)">
         <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">2×4 FRAMING REFERENCE</text>
         
         <!-- Wall Framing Detail -->
@@ -167,8 +167,8 @@ export function generatePlanViewSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">FLOOR PLAN VIEW</text>
-      <text x="${(totalWidth + 300)/2}" y="${totalHeight + 220}" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${length}' × ${width}' Shed</text>
+      <text x="${(totalWidth + 450)/2}" y="35" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">FLOOR PLAN VIEW</text>
+      <text x="${(totalWidth + 450)/2}" y="${totalHeight + 235}" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${length}' × ${width}' Shed</text>
     </svg>
   `;
 }
@@ -187,7 +187,7 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
   }
   
   return `
-    <svg viewBox="0 0 ${totalWidth + 250} 250" style="width: 100%; height: 350px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -281,7 +281,7 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Construction References -->
-      <g transform="translate(${totalWidth + 120}, 50)">
+      <g transform="translate(${totalWidth + 150}, 50)">
         <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">CONSTRUCTION REFERENCE</text>
         
         <!-- Wall section detail -->
@@ -343,8 +343,8 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">FRONT ELEVATION</text>
-      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
+      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">FRONT ELEVATION</text>
+      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
     </svg>
   `;
 }
@@ -363,7 +363,7 @@ export function generateSideElevationSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 250} 250" style="width: 100%; height: 350px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -435,7 +435,7 @@ export function generateSideElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Side Wall Construction Reference -->
-      <g transform="translate(${totalWidth + 120}, 50)">
+      <g transform="translate(${totalWidth + 150}, 50)">
         <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">SIDE WALL FRAMING</text>
         
         <!-- Side wall detail -->
@@ -478,8 +478,8 @@ export function generateSideElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">SIDE ELEVATION</text>
-      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
+      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">SIDE ELEVATION</text>
+      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
     </svg>
   `;
 }
@@ -498,7 +498,7 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 250} 240" style="width: 100%; height: 350px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -620,8 +620,8 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 250)/2}" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">CROSS SECTION</text>
-      <text x="${(totalWidth + 250)/2}" y="225" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
+      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">CROSS SECTION</text>
+      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
     </svg>
   `;
 }
