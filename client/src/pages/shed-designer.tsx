@@ -1209,6 +1209,11 @@ export default function ShedDesigner() {
                   </div>
                 </div>
               </div>
+              
+              {/* Shopping List in single column */}
+              <div className="mt-8">
+                <FullShoppingList config={config} selectedStore={selectedStore} zipCode={zipCode} />
+              </div>
             </div>
             
             {/* Store Availability */}
