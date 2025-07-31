@@ -921,6 +921,38 @@ export default function ShedDesigner() {
                     <p className="text-sm text-neutral-600">materials only</p>
                   </div>
                 </div>
+                
+                {/* Category Subtotals */}
+                <div className="space-y-2 mb-3">
+                  {(() => {
+                    const materials = calculateMaterials(config, selectedStore);
+                    const categorizedMaterials = materials.reduce((acc, material) => {
+                      if (!acc[material.category]) acc[material.category] = [];
+                      acc[material.category].push(material);
+                      return acc;
+                    }, {} as Record<string, typeof materials>);
+
+                    const categoryTotals = Object.entries(categorizedMaterials).map(([category, items]) => ({
+                      category,
+                      total: items.reduce((sum, item) => sum + item.estimatedPrice, 0),
+                    }));
+
+                    const categoryLabels: Record<string, string> = {
+                      lumber: "Lumber & Framing",
+                      hardware: "Hardware & Fasteners", 
+                      roofing: "Roofing Materials",
+                      siding: "Siding & Trim",
+                      foundation: "Foundation",
+                    };
+
+                    return categoryTotals.map(({ category, total }) => (
+                      <div key={category} className="flex justify-between items-center text-sm">
+                        <span className="text-neutral-600">{categoryLabels[category] || category}</span>
+                        <span className="font-medium">${total.toFixed(2)}</span>
+                      </div>
+                    ));
+                  })()}
+                </div>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Label htmlFor="zipCode" className="text-sm font-medium text-neutral-700">ZIP Code:</Label>
