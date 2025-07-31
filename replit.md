@@ -17,7 +17,8 @@ ShedBuilder Pro is a full-stack web application for designing and pricing custom
 - Implemented comprehensive 3-page printing system with professional styling and detailed cut lists
 - Added store selection feature allowing users to choose between Home Depot, Lowe's, and Menards for pricing and ordering
 - Enhanced print output to include actual blueprint drawings and store-specific information
-- **Shopping List Revolution (Latest)**: Completely integrated shopping list into main designer page with automatic updates, removed separate Materials tab, embedded price comparison tools with store filtering table, and eliminated all manual "Generate" buttons for seamless user experience
+- **Shopping List Revolution**: Completely integrated shopping list into main designer page with automatic updates, removed separate Materials tab, embedded price comparison tools with store filtering table, and eliminated all manual "Generate" buttons for seamless user experience
+- **Template Integration (Latest)**: Moved templates section from separate navigation tab to be positioned under blueprints section in main designer page, consolidating all functionality into single interface and removing redundant Templates tab from navigation
 
 ## User Preferences
 

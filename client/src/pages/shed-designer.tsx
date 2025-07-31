@@ -999,8 +999,40 @@ export default function ShedDesigner() {
                 config={config}
               />
               
+              {/* Templates Section - moved from side panel */}
+              <div className="mt-6 p-4 bg-neutral-50 rounded-lg border">
+                <h3 className="font-medium text-neutral-900 mb-3">Templates</h3>
+                <p className="text-sm text-neutral-600 mb-4">Start with a pre-designed template or continue customizing your current design</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {templatesLoading ? (
+                    <div className="col-span-full space-y-3">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="h-16 bg-white rounded-lg animate-pulse" />
+                      ))}
+                    </div>
+                  ) : (
+                    (templates as ShedDesign[]).map((template: ShedDesign) => (
+                      <Button
+                        key={template.id}
+                        variant="outline"
+                        className="p-3 h-auto text-left justify-start hover:bg-white bg-white"
+                        onClick={() => handleTemplateSelect(template)}
+                      >
+                        <div className="w-full">
+                          <div className="font-medium text-sm mb-1">{template.name}</div>
+                          <div className="text-xs text-neutral-500 flex justify-between">
+                            <span>{template.length}×{template.width} ft</span>
+                            <span className="capitalize">{template.templateCategory}</span>
+                          </div>
+                        </div>
+                      </Button>
+                    ))
+                  )}
+                </div>
+              </div>
+              
               {/* Quick Dimensions */}
-              <div className="mt-4 grid grid-cols-3 gap-4">
+              <div className="mt-6 grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <Label className="block text-sm text-neutral-600 mb-1">Length</Label>
                   <Input
@@ -1052,35 +1084,7 @@ export default function ShedDesigner() {
           {/* Side Panel */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Quick Templates */}
-            <div className="bg-white rounded-lg shadow-material p-6">
-              <h3 className="font-medium text-neutral-900 mb-4">Popular Templates</h3>
-              <div className="grid grid-cols-1 gap-3">
-                {templatesLoading ? (
-                  <div className="space-y-3">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className="h-16 bg-neutral-100 rounded-lg animate-pulse" />
-                    ))}
-                  </div>
-                ) : (
-                  (templates as ShedDesign[]).map((template: ShedDesign) => (
-                    <Button
-                      key={template.id}
-                      variant="outline"
-                      className="p-4 h-auto text-left justify-start"
-                      onClick={() => handleTemplateSelect(template)}
-                    >
-                      <div>
-                        <div className="font-medium text-sm">{template.name}</div>
-                        <div className="text-xs text-neutral-500">
-                          {template.length}×{template.width} - {template.templateCategory}
-                        </div>
-                      </div>
-                    </Button>
-                  ))
-                )}
-              </div>
-            </div>
+
             
             {/* Complete Shopping List */}
             <div className="bg-white rounded-lg shadow-material p-6">
