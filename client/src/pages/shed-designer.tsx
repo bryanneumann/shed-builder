@@ -12,9 +12,9 @@ import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import Shed3DViewer from "@/components/shed-3d-viewer";
 import ConfigurationTabs from "@/components/configuration-tabs";
-import CostSummary from "@/components/cost-summary";
+
 import StoreAvailability from "@/components/store-availability";
-import MaterialListModal from "@/components/material-list-modal";
+
 import { generatePlanViewSVG, generateFrontElevationSVG, generateSideElevationSVG, generateCrossSectionSVG } from "@/lib/blueprint-generator";
 import type { ShedConfig, ShedDesign } from "@shared/schema";
 
@@ -251,7 +251,7 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
         </div>
         
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button onClick={handleOrderFromStore} className="font-medium">
             <ExternalLink className="h-4 w-4 mr-2" />
             Order from {stores[selectedStore as keyof typeof stores].name}
@@ -259,6 +259,14 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
           <Button onClick={handlePrintComplete} className="font-medium">
             <Printer className="h-4 w-4 mr-2" />
             Print Complete Package
+          </Button>
+          <Button onClick={() => {
+            // Call the parent print function
+            const printPlansEvent = new CustomEvent('printPlans');
+            window.dispatchEvent(printPlansEvent);
+          }} variant="outline" className="font-medium">
+            <Printer className="h-4 w-4 mr-2" />
+            Print Plans Only
           </Button>
         </div>
       </div>
@@ -290,7 +298,7 @@ export default function ShedDesigner() {
     setZipCode(newZipCode);
     localStorage.setItem("shedbuilder-zipcode", newZipCode);
   };
-  const [showMaterialList, setShowMaterialList] = useState(false);
+
   const [selectedStore, setSelectedStore] = useState("home-depot");
   
   const [config, setConfig] = useState<ShedConfig>({
@@ -343,15 +351,22 @@ export default function ShedDesigner() {
     });
   };
 
-  const handleGenerateShoppingList = () => {
-    setShowMaterialList(true);
-  };
+
 
   const stores = {
     "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
     "lowes": { name: "Lowe's", url: "https://www.lowes.com" },
     "menards": { name: "Menards", url: "https://www.menards.com" }
   };
+
+  // Listen for print plans event
+  useEffect(() => {
+    const handlePrintPlansEvent = () => {
+      handlePrintPlans();
+    };
+    window.addEventListener('printPlans', handlePrintPlansEvent);
+    return () => window.removeEventListener('printPlans', handlePrintPlansEvent);
+  }, [config, zipCode]);
 
   const handlePrintPlans = () => {
     const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
@@ -779,15 +794,6 @@ export default function ShedDesigner() {
               </div>
             </div>
             
-            {/* Cost Summary */}
-            <CostSummary
-              config={config}
-              zipCode={zipCode}
-              onZipCodeChange={handleZipCodeChange}
-              onGenerateShoppingList={handleGenerateShoppingList}
-              onPrintPlans={handlePrintPlans}
-            />
-
             {/* Complete Shopping List */}
             <div className="bg-white rounded-lg shadow-material p-6">
               <div className="flex items-center justify-between mb-4">
@@ -796,21 +802,43 @@ export default function ShedDesigner() {
                 </h3>
               </div>
               
-              {/* Store Selection */}
-              <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 mb-6">
+              {/* Quick Cost Summary */}
+              <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20 mb-6">
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <h4 className="font-medium text-neutral-900">Project Estimate</h4>
+                    <p className="text-sm text-neutral-600">{config.length}×{config.width} {config.roofType} roof shed</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-primary">
+                      ${calculateMaterials(config, selectedStore).reduce((sum, material) => sum + material.estimatedPrice, 0).toFixed(2)}
+                    </div>
+                    <p className="text-sm text-neutral-600">materials only</p>
+                  </div>
+                </div>
                 <div className="flex items-center gap-4">
-                  <label className="text-sm font-medium text-neutral-700">Select Your Store:</label>
-                  <select 
-                    value={selectedStore} 
-                    onChange={(e) => setSelectedStore(e.target.value)}
-                    className="border border-neutral-300 rounded px-3 py-2 text-sm min-w-[200px]"
-                  >
-                    <option value="home-depot">Home Depot - South Austin (3.2 mi)</option>
-                    <option value="lowes">Lowe's - Sunset Valley (4.7 mi)</option>
-                    <option value="menards">Menards - Cedar Park (18.3 mi)</option>
-                  </select>
-                  <div className="text-sm text-neutral-600">
-                    Pricing for {selectedStore === "home-depot" ? "Home Depot" : selectedStore === "lowes" ? "Lowe's" : "Menards"} in your area
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="zipCode" className="text-sm font-medium text-neutral-700">ZIP Code:</Label>
+                    <Input
+                      id="zipCode"
+                      type="text"
+                      value={zipCode}
+                      onChange={(e) => handleZipCodeChange(e.target.value)}
+                      placeholder="Enter ZIP"
+                      className="w-20 text-sm"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-neutral-700">Store:</label>
+                    <select 
+                      value={selectedStore} 
+                      onChange={(e) => setSelectedStore(e.target.value)}
+                      className="border border-neutral-300 rounded px-3 py-2 text-sm min-w-[200px]"
+                    >
+                      <option value="home-depot">Home Depot - South Austin (3.2 mi)</option>
+                      <option value="lowes">Lowe's - Sunset Valley (4.7 mi)</option>
+                      <option value="menards">Menards - Cedar Park (18.3 mi)</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -826,13 +854,7 @@ export default function ShedDesigner() {
         </div>
       </div>
 
-      {/* Material List Modal */}
-      <MaterialListModal
-        isOpen={showMaterialList}
-        onClose={() => setShowMaterialList(false)}
-        config={config}
-        zipCode={zipCode}
-      />
+
 
 
     </div>
