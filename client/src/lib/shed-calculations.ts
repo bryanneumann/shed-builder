@@ -192,11 +192,11 @@ export function calculateMaterials(config: ShedConfig, selectedStore: string = "
   if (config.roofingType === "asphalt-shingles") {
     materials.push({
       category: "roofing",
-      name: "Architectural Asphalt Shingles",
-      description: "30-year warranty shingles",
+      name: "3-Tab Asphalt Shingles",
+      description: "25-year warranty basic shingles",
       quantity: roofSquares,
       unit: "squares",
-      estimatedPrice: Math.round(roofSquares * 135.00 * storeInfo.multiplier * 100) / 100,
+      estimatedPrice: Math.round(roofSquares * 98.00 * storeInfo.multiplier * 100) / 100,
     });
     
     materials.push({
@@ -206,6 +206,24 @@ export function calculateMaterials(config: ShedConfig, selectedStore: string = "
       quantity: roofSquares,
       unit: "rolls",
       estimatedPrice: Math.round(roofSquares * 45.00 * storeInfo.multiplier * 100) / 100,
+    });
+  } else if (config.roofingType === "architectural-shingles") {
+    materials.push({
+      category: "roofing",
+      name: "Architectural Asphalt Shingles",
+      description: "30-year warranty dimensional shingles",
+      quantity: roofSquares,
+      unit: "squares",
+      estimatedPrice: Math.round(roofSquares * 165.00 * storeInfo.multiplier * 100) / 100,
+    });
+    
+    materials.push({
+      category: "roofing",
+      name: "30 lb Roofing Felt",
+      description: "Premium underlayment",
+      quantity: roofSquares,
+      unit: "rolls",
+      estimatedPrice: Math.round(roofSquares * 58.00 * storeInfo.multiplier * 100) / 100,
     });
   }
   
@@ -223,6 +241,9 @@ export function calculateMaterials(config: ShedConfig, selectedStore: string = "
   // Siding calculations
   const sidingArea = wallArea - (config.doorCount * 21) - (config.windowCount * 12); // Subtract openings
   
+  // Calculate trim needs (used by fiber cement siding)
+  const trimLinearFt = wallPerimeter + (config.length * 2); // Wall corners + fascia
+  
   if (config.sidingType === "plywood") {
     const sidingSheets = Math.ceil(sidingArea / 32);
     materials.push({
@@ -233,18 +254,51 @@ export function calculateMaterials(config: ShedConfig, selectedStore: string = "
       unit: "sheets",
       estimatedPrice: Math.round(sidingSheets * 45.00 * storeInfo.multiplier * 100) / 100,
     });
+  } else if (config.sidingType === "fiber-cement") {
+    const sidingSheets = Math.ceil(sidingArea / 32);
+    materials.push({
+      category: "siding",
+      name: "HardiePlank Fiber Cement Siding",
+      description: "4x8 lap siding, 7.25\" exposure",
+      quantity: sidingSheets,
+      unit: "sheets", 
+      estimatedPrice: Math.round(sidingSheets * 68.00 * storeInfo.multiplier * 100) / 100,
+    });
+    
+    // Fiber cement requires special fasteners
+    const fiberCementNails = Math.ceil(sidingSheets * 2);
+    materials.push({
+      category: "hardware",
+      name: "Fiber Cement Siding Nails",
+      description: "2\" galvanized coil nails (5 lb box)",
+      quantity: fiberCementNails,
+      unit: "boxes",
+      estimatedPrice: Math.round(fiberCementNails * 38.50 * storeInfo.multiplier * 100) / 100,
+    });
+    
+    // HardieTrim for corners and trim
+    const trimPieces = Math.ceil(trimLinearFt / 12);
+    materials.push({
+      category: "siding",
+      name: "HardieTrim Fiber Cement Trim",
+      description: "1x4x12' trim boards",
+      quantity: trimPieces,
+      unit: "pieces",
+      estimatedPrice: Math.round(trimPieces * 24.50 * storeInfo.multiplier * 100) / 100,
+    });
   }
   
-  // Trim and fascia
-  const trimLinearFt = wallPerimeter + (config.length * 2); // Wall corners + fascia
-  materials.push({
-    category: "siding",
-    name: "1x4x8' Pine Trim Board",
-    description: "Corner trim and fascia",
-    quantity: Math.ceil(trimLinearFt / 8),
-    unit: "pieces",
-    estimatedPrice: Math.round(Math.ceil(trimLinearFt / 8) * 8.97 * storeInfo.multiplier * 100) / 100,
-  });
+  // Standard trim and fascia (for non-fiber cement siding)
+  if (config.sidingType !== "fiber-cement") {
+    materials.push({
+      category: "siding",
+      name: "1x4x8' Pine Trim Board",
+      description: "Corner trim and fascia",
+      quantity: Math.ceil(trimLinearFt / 8),
+      unit: "pieces",
+      estimatedPrice: Math.round(Math.ceil(trimLinearFt / 8) * 8.97 * storeInfo.multiplier * 100) / 100,
+    });
+  }
   
   // Doors and windows (basic estimates)
   if (config.doorCount > 0) {

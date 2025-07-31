@@ -102,8 +102,8 @@ export const shedConfigSchema = z.object({
   wallHeight: z.number().min(6).max(12),
   doorCount: z.number().min(0).max(4),
   windowCount: z.number().min(0).max(8),
-  sidingType: z.enum(["plywood", "vinyl", "wood", "metal"]),
-  roofingType: z.enum(["asphalt-shingles", "metal", "rubber"]),
+  sidingType: z.enum(["plywood", "vinyl", "wood", "metal", "fiber-cement"]),
+  roofingType: z.enum(["asphalt-shingles", "architectural-shingles", "metal", "rubber"]),
 });
 
 export type ShedConfig = z.infer<typeof shedConfigSchema>;

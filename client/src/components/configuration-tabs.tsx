@@ -142,6 +142,8 @@ export default function ConfigurationTabs({ config, onConfigChange }: Configurat
                     <SelectItem value="vinyl">Vinyl Siding</SelectItem>
                     <SelectItem value="wood">Wood Lap Siding</SelectItem>
                     <SelectItem value="metal">Metal Siding</SelectItem>
+                    <SelectItem value="fiber-cement">Fiber Cement (HardiePlank)</SelectItem>
+                    <SelectItem value="fiber-cement">Fiber Cement (HardiePlank)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -204,7 +206,8 @@ export default function ConfigurationTabs({ config, onConfigChange }: Configurat
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="asphalt-shingles">Asphalt Shingles</SelectItem>
+                    <SelectItem value="asphalt-shingles">3-Tab Asphalt Shingles</SelectItem>
+                    <SelectItem value="architectural-shingles">Architectural Shingles</SelectItem>
                     <SelectItem value="metal">Metal Roofing</SelectItem>
                     <SelectItem value="rubber">Rubber Membrane</SelectItem>
                   </SelectContent>
