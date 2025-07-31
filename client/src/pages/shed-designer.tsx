@@ -63,8 +63,8 @@ export default function ShedDesigner() {
       wallHeight: template.wallHeight,
       doorCount: template.doorCount,
       windowCount: template.windowCount,
-      sidingType: template.sidingType as "plywood" | "vinyl" | "wood" | "metal",
-      roofingType: template.roofingType as "asphalt-shingles" | "metal" | "rubber",
+      sidingType: template.sidingType as "plywood" | "vinyl" | "wood" | "metal" | "fiber-cement",
+      roofingType: template.roofingType as "asphalt-shingles" | "architectural-shingles" | "metal" | "rubber",
     });
     
     toast({
