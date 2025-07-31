@@ -1209,8 +1209,6 @@ export default function ShedDesigner() {
                   </div>
                 </div>
               </div>
-              
-              <FullShoppingList config={config} selectedStore={selectedStore} zipCode={zipCode} />
             </div>
             
             {/* Store Availability */}
