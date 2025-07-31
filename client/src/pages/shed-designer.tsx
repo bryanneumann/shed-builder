@@ -5,88 +5,155 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { calculateMaterials } from "@/lib/shed-calculations";
-import { Package, Wrench, ExternalLink, Printer, BarChart3, Filter, Expand } from "lucide-react";
-
+import {
+  Package,
+  Wrench,
+  ExternalLink,
+  Printer,
+  BarChart3,
+  Filter,
+  Expand,
+} from "lucide-react";
 
 import Shed3DViewer from "@/components/shed-3d-viewer";
 import ConfigurationTabs from "@/components/configuration-tabs";
 
 import StoreAvailability from "@/components/store-availability";
 
-import { generatePlanViewSVG, generateFrontElevationSVG, generateSideElevationSVG, generateCrossSectionSVG } from "@/lib/blueprint-generator";
+import {
+  generatePlanViewSVG,
+  generateFrontElevationSVG,
+  generateSideElevationSVG,
+  generateCrossSectionSVG,
+} from "@/lib/blueprint-generator";
 import type { ShedConfig, ShedDesign } from "@shared/schema";
 
 // Material Item Component
-function MaterialItem({ material, selectedStore }: { material: any; selectedStore: string }) {
+function MaterialItem({
+  material,
+  selectedStore,
+}: {
+  material: any;
+  selectedStore: string;
+}) {
   // Mock stock status - in real app this would come from API
   const inStock = Math.random() > 0.2; // 80% chance of being in stock
   const stockCount = Math.floor(Math.random() * 50) + 5;
   const isLimitedStock = stockCount < 10;
-  
+
   const stores = {
     "home-depot": { name: "Home Depot", skuPrefix: "HD" },
-    "lowes": { name: "Lowe's", skuPrefix: "LW" },
-    "menards": { name: "Menards", skuPrefix: "MN" }
+    lowes: { name: "Lowe's", skuPrefix: "LW" },
+    menards: { name: "Menards", skuPrefix: "MN" },
   };
 
   return (
     <div className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg">
       <div className="flex-1">
         <div className="font-medium text-sm">{material.name}</div>
-        <div className="text-xs text-neutral-500">SKU: {stores[selectedStore as keyof typeof stores].skuPrefix || "HD"}{Math.floor(Math.random() * 900000) + 100000} • {stores[selectedStore as keyof typeof stores].name}</div>
+        <div className="text-xs text-neutral-500">
+          SKU: {stores[selectedStore as keyof typeof stores].skuPrefix || "HD"}
+          {Math.floor(Math.random() * 900000) + 100000} •{" "}
+          {stores[selectedStore as keyof typeof stores].name}
+        </div>
         {inStock ? (
-          <Badge variant={isLimitedStock ? "secondary" : "default"} className={isLimitedStock ? "bg-orange-100 text-orange-800 border-orange-200" : "bg-green-100 text-green-800 border-green-200"}>
-            {isLimitedStock ? "Limited stock" : "In stock"} - {stockCount} available
+          <Badge
+            variant={isLimitedStock ? "secondary" : "default"}
+            className={
+              isLimitedStock
+                ? "bg-orange-100 text-orange-800 border-orange-200"
+                : "bg-green-100 text-green-800 border-green-200"
+            }
+          >
+            {isLimitedStock ? "Limited stock" : "In stock"} - {stockCount}{" "}
+            available
           </Badge>
         ) : (
-          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+          <Badge
+            variant="outline"
+            className="bg-red-100 text-red-800 border-red-200"
+          >
             Out of stock
           </Badge>
         )}
       </div>
       <div className="text-right">
-        <div className="font-medium">{material.quantity} {material.unit}</div>
-        <div className="text-sm text-neutral-600">${(material.estimatedPrice / material.quantity).toFixed(2)} ea</div>
-        <div className="font-bold text-primary">${material.estimatedPrice.toFixed(2)}</div>
+        <div className="font-medium">
+          {material.quantity} {material.unit}
+        </div>
+        <div className="text-sm text-neutral-600">
+          ${(material.estimatedPrice / material.quantity).toFixed(2)} ea
+        </div>
+        <div className="font-bold text-primary">
+          ${material.estimatedPrice.toFixed(2)}
+        </div>
       </div>
     </div>
   );
 }
 
 // Full Shopping List Component with Price Comparison
-function FullShoppingList({ config, selectedStore, zipCode }: { 
-  config: ShedConfig; 
-  selectedStore: string; 
-  zipCode: string 
+function FullShoppingList({
+  config,
+  selectedStore,
+  zipCode,
+}: {
+  config: ShedConfig;
+  selectedStore: string;
+  zipCode: string;
 }) {
   const [showPriceComparison, setShowPriceComparison] = useState(false);
-  const [compareStores, setCompareStores] = useState(["home-depot", "lowes", "menards"]);
-  
-  const materials = calculateMaterials(config, selectedStore);
-  
-  // Group materials by category
-  const lumberMaterials = materials.filter(m => m.category === "lumber");
-  const hardwareMaterials = materials.filter(m => m.category === "hardware");
-  const roofingMaterials = materials.filter(m => m.category === "roofing");
-  const sidingMaterials = materials.filter(m => m.category === "siding");
-  const foundationMaterials = materials.filter(m => m.category === "foundation");
+  const [compareStores, setCompareStores] = useState([
+    "home-depot",
+    "lowes",
+    "menards",
+  ]);
 
-  const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
+  const materials = calculateMaterials(config, selectedStore);
+
+  // Group materials by category
+  const lumberMaterials = materials.filter((m) => m.category === "lumber");
+  const hardwareMaterials = materials.filter((m) => m.category === "hardware");
+  const roofingMaterials = materials.filter((m) => m.category === "roofing");
+  const sidingMaterials = materials.filter((m) => m.category === "siding");
+  const foundationMaterials = materials.filter(
+    (m) => m.category === "foundation",
+  );
+
+  const totalCost = materials.reduce(
+    (sum, material) => sum + material.estimatedPrice,
+    0,
+  );
 
   // Calculate prices for all stores for comparison
   const allStorePrices = {
-    "home-depot": calculateMaterials(config, "home-depot").reduce((sum, m) => sum + m.estimatedPrice, 0),
-    "lowes": calculateMaterials(config, "lowes").reduce((sum, m) => sum + m.estimatedPrice, 0),
-    "menards": calculateMaterials(config, "menards").reduce((sum, m) => sum + m.estimatedPrice, 0)
+    "home-depot": calculateMaterials(config, "home-depot").reduce(
+      (sum, m) => sum + m.estimatedPrice,
+      0,
+    ),
+    lowes: calculateMaterials(config, "lowes").reduce(
+      (sum, m) => sum + m.estimatedPrice,
+      0,
+    ),
+    menards: calculateMaterials(config, "menards").reduce(
+      (sum, m) => sum + m.estimatedPrice,
+      0,
+    ),
   };
 
   const stores = {
     "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
-    "lowes": { name: "Lowe's", url: "https://www.lowes.com" },
-    "menards": { name: "Menards", url: "https://www.menards.com" }
+    lowes: { name: "Lowe's", url: "https://www.lowes.com" },
+    menards: { name: "Menards", url: "https://www.menards.com" },
   };
 
   const handleOrderFromStore = () => {
@@ -95,21 +162,19 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
 
   const handlePrintComplete = () => {
     // Call the parent comprehensive print function which includes everything
-    const printCompleteEvent = new CustomEvent('printComplete');
+    const printCompleteEvent = new CustomEvent("printComplete");
     window.dispatchEvent(printCompleteEvent);
   };
 
   const storeNames = {
     "home-depot": "Home Depot",
-    "lowes": "Lowe's", 
-    "menards": "Menards"
+    lowes: "Lowe's",
+    menards: "Menards",
   };
 
   const handleStoreToggle = (store: string) => {
-    setCompareStores(prev => 
-      prev.includes(store) 
-        ? prev.filter(s => s !== store)
-        : [...prev, store]
+    setCompareStores((prev) =>
+      prev.includes(store) ? prev.filter((s) => s !== store) : [...prev, store],
     );
   };
 
@@ -134,7 +199,9 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-neutral-600" />
-              <span className="text-sm font-medium text-neutral-700">Compare Stores:</span>
+              <span className="text-sm font-medium text-neutral-700">
+                Compare Stores:
+              </span>
             </div>
             {Object.entries(storeNames).map(([store, name]) => (
               <label key={store} className="flex items-center gap-2 text-sm">
@@ -148,7 +215,7 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
               </label>
             ))}
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -160,32 +227,46 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
                 </tr>
               </thead>
               <tbody>
-                {compareStores.map(store => {
-                  const cost = allStorePrices[store as keyof typeof allStorePrices];
+                {compareStores.map((store) => {
+                  const cost =
+                    allStorePrices[store as keyof typeof allStorePrices];
                   const minCost = Math.min(...Object.values(allStorePrices));
                   const savings = cost - minCost;
                   const isBest = cost === minCost;
-                  
+
                   return (
-                    <tr key={store} className={`border-b ${isBest ? 'bg-green-50' : ''}`}>
+                    <tr
+                      key={store}
+                      className={`border-b ${isBest ? "bg-green-50" : ""}`}
+                    >
                       <td className="py-2 font-medium">
                         {storeNames[store as keyof typeof storeNames]}
                         <div className="text-xs text-neutral-500">
-                          {store === "home-depot" ? "South Austin (3.2 mi)" : 
-                           store === "lowes" ? "Sunset Valley (4.7 mi)" : 
-                           "Cedar Park (18.3 mi)"}
+                          {store === "home-depot"
+                            ? "South Austin (3.2 mi)"
+                            : store === "lowes"
+                              ? "Sunset Valley (4.7 mi)"
+                              : "Cedar Park (18.3 mi)"}
                         </div>
                       </td>
-                      <td className="py-2 text-right font-bold">${cost.toFixed(2)}</td>
+                      <td className="py-2 text-right font-bold">
+                        ${cost.toFixed(2)}
+                      </td>
                       <td className="py-2 text-right">
                         {savings > 0 ? (
-                          <span className="text-red-600">+${savings.toFixed(2)}</span>
+                          <span className="text-red-600">
+                            +${savings.toFixed(2)}
+                          </span>
                         ) : (
                           <span className="text-green-600">$0.00</span>
                         )}
                       </td>
                       <td className="py-2 text-center">
-                        {isBest && <Badge className="bg-green-600 text-white">Best</Badge>}
+                        {isBest && (
+                          <Badge className="bg-green-600 text-white">
+                            Best
+                          </Badge>
+                        )}
                       </td>
                     </tr>
                   );
@@ -206,12 +287,16 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             </h3>
             <div className="space-y-3">
               {lumberMaterials.map((material, index) => (
-                <MaterialItem key={index} material={material} selectedStore={selectedStore} />
+                <MaterialItem
+                  key={index}
+                  material={material}
+                  selectedStore={selectedStore}
+                />
               ))}
             </div>
           </div>
         )}
-        
+
         {/* Hardware Section */}
         {hardwareMaterials.length > 0 && (
           <div>
@@ -221,12 +306,16 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             </h3>
             <div className="space-y-3">
               {hardwareMaterials.map((material, index) => (
-                <MaterialItem key={index} material={material} selectedStore={selectedStore} />
+                <MaterialItem
+                  key={index}
+                  material={material}
+                  selectedStore={selectedStore}
+                />
               ))}
             </div>
           </div>
         )}
-        
+
         {/* Roofing Section */}
         {roofingMaterials.length > 0 && (
           <div>
@@ -236,12 +325,16 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             </h3>
             <div className="space-y-3">
               {roofingMaterials.map((material, index) => (
-                <MaterialItem key={index} material={material} selectedStore={selectedStore} />
+                <MaterialItem
+                  key={index}
+                  material={material}
+                  selectedStore={selectedStore}
+                />
               ))}
             </div>
           </div>
         )}
-        
+
         {/* Siding Section */}
         {sidingMaterials.length > 0 && (
           <div>
@@ -251,12 +344,16 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             </h3>
             <div className="space-y-3">
               {sidingMaterials.map((material, index) => (
-                <MaterialItem key={index} material={material} selectedStore={selectedStore} />
+                <MaterialItem
+                  key={index}
+                  material={material}
+                  selectedStore={selectedStore}
+                />
               ))}
             </div>
           </div>
         )}
-        
+
         {/* Foundation Section */}
         {foundationMaterials.length > 0 && (
           <div>
@@ -266,20 +363,26 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             </h3>
             <div className="space-y-3">
               {foundationMaterials.map((material, index) => (
-                <MaterialItem key={index} material={material} selectedStore={selectedStore} />
+                <MaterialItem
+                  key={index}
+                  material={material}
+                  selectedStore={selectedStore}
+                />
               ))}
             </div>
           </div>
         )}
       </div>
-      
+
       {/* Totals and Actions */}
       <div className="border-t border-neutral-200 pt-6">
         <div className="flex justify-between items-center mb-4">
           <div className="text-lg font-bold">Total Materials Cost</div>
-          <div className="text-2xl font-bold text-primary">${totalCost.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-primary">
+            ${totalCost.toFixed(2)}
+          </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button onClick={handleOrderFromStore} className="font-medium">
@@ -290,17 +393,21 @@ function FullShoppingList({ config, selectedStore, zipCode }: {
             <Printer className="h-4 w-4 mr-2" />
             Print Complete Package
           </Button>
-          <Button onClick={() => {
-            // Call the parent print function
-            const printPlansEvent = new CustomEvent('printPlans');
-            window.dispatchEvent(printPlansEvent);
-          }} variant="outline" className="font-medium">
+          <Button
+            onClick={() => {
+              // Call the parent print function
+              const printPlansEvent = new CustomEvent("printPlans");
+              window.dispatchEvent(printPlansEvent);
+            }}
+            variant="outline"
+            className="font-medium"
+          >
             <Printer className="h-4 w-4 mr-2" />
             Print Plans Only
           </Button>
         </div>
       </div>
-      
+
       {materials.length === 0 && (
         <div className="text-center text-neutral-500 py-8">
           Configure your shed to see materials
@@ -330,7 +437,7 @@ export default function ShedDesigner() {
   };
 
   const [selectedStore, setSelectedStore] = useState("home-depot");
-  
+
   const [config, setConfig] = useState<ShedConfig>({
     name: "My Shed",
     length: 10,
@@ -354,7 +461,7 @@ export default function ShedDesigner() {
   });
 
   const handleConfigChange = (updates: Partial<ShedConfig>) => {
-    setConfig(prev => ({ ...prev, ...updates }));
+    setConfig((prev) => ({ ...prev, ...updates }));
   };
 
   const handleTemplateSelect = (template: ShedDesign) => {
@@ -363,30 +470,49 @@ export default function ShedDesigner() {
       length: template.length,
       width: template.width,
       height: template.height,
-      roofType: template.roofType as "gable" | "gambrel" | "lean-to" | "hip" | "shed" | "saltbox",
-      foundationType: template.foundationType as "concrete-slab" | "gravel-pad" | "concrete-piers",
-      lumberGrade: template.lumberGrade as "pressure-treated" | "douglas-fir" | "southern-pine",
+      roofType: template.roofType as
+        | "gable"
+        | "gambrel"
+        | "lean-to"
+        | "hip"
+        | "shed"
+        | "saltbox",
+      foundationType: template.foundationType as
+        | "concrete-slab"
+        | "gravel-pad"
+        | "concrete-piers",
+      lumberGrade: template.lumberGrade as
+        | "pressure-treated"
+        | "douglas-fir"
+        | "southern-pine",
       joistSpacing: template.joistSpacing as 12 | 16 | 24,
       studSize: template.studSize as "2x4" | "2x6",
       wallHeight: template.wallHeight,
       doorCount: template.doorCount,
       windowCount: template.windowCount,
-      sidingType: template.sidingType as "plywood" | "vinyl" | "wood" | "metal" | "fiber-cement",
-      roofingType: template.roofingType as "asphalt-shingles" | "architectural-shingles" | "metal" | "rubber",
+      sidingType: template.sidingType as
+        | "plywood"
+        | "vinyl"
+        | "wood"
+        | "metal"
+        | "fiber-cement",
+      roofingType: template.roofingType as
+        | "asphalt-shingles"
+        | "architectural-shingles"
+        | "metal"
+        | "rubber",
     });
-    
+
     toast({
       title: "Template Applied",
       description: `Loaded ${template.name} template configuration.`,
     });
   };
 
-
-
   const stores = {
     "home-depot": { name: "Home Depot", url: "https://www.homedepot.com" },
-    "lowes": { name: "Lowe's", url: "https://www.lowes.com" },
-    "menards": { name: "Menards", url: "https://www.menards.com" }
+    lowes: { name: "Lowe's", url: "https://www.lowes.com" },
+    menards: { name: "Menards", url: "https://www.menards.com" },
   };
 
   // Listen for print events
@@ -397,25 +523,29 @@ export default function ShedDesigner() {
     const handlePrintCompleteEvent = () => {
       handlePrintComplete();
     };
-    window.addEventListener('printPlans', handlePrintPlansEvent);
-    window.addEventListener('printComplete', handlePrintCompleteEvent);
+    window.addEventListener("printPlans", handlePrintPlansEvent);
+    window.addEventListener("printComplete", handlePrintCompleteEvent);
     return () => {
-      window.removeEventListener('printPlans', handlePrintPlansEvent);
-      window.removeEventListener('printComplete', handlePrintCompleteEvent);
+      window.removeEventListener("printPlans", handlePrintPlansEvent);
+      window.removeEventListener("printComplete", handlePrintCompleteEvent);
     };
   }, [config, zipCode, selectedStore]);
 
   const handlePrintComplete = () => {
     const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
     const materials = calculateMaterials(config, selectedStore);
-    const lumberMaterials = materials.filter(m => m.category === "lumber");
-    const hardwareMaterials = materials.filter(m => m.category === "hardware");
-    const roofingMaterials = materials.filter(m => m.category === "roofing");
-    const sidingMaterials = materials.filter(m => m.category === "siding");
-    const foundationMaterials = materials.filter(m => m.category === "foundation");
-    
+    const lumberMaterials = materials.filter((m) => m.category === "lumber");
+    const hardwareMaterials = materials.filter(
+      (m) => m.category === "hardware",
+    );
+    const roofingMaterials = materials.filter((m) => m.category === "roofing");
+    const sidingMaterials = materials.filter((m) => m.category === "siding");
+    const foundationMaterials = materials.filter(
+      (m) => m.category === "foundation",
+    );
+
     // Create a new window for printing with the comprehensive print layout
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    const printWindow = window.open("", "_blank", "width=800,height=600");
     if (printWindow) {
       // Add comprehensive styles for all pages
       printWindow.document.write(`
@@ -500,24 +630,25 @@ export default function ShedDesigner() {
           <div class="specifications">
             <h2>Specifications</h2>
             <div class="spec-grid">
-              <div class="spec-item"><strong>Foundation Type:</strong> ${config.foundationType.replace('-', ' ')}</div>
-              <div class="spec-item"><strong>Lumber Grade:</strong> ${config.lumberGrade.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Foundation Type:</strong> ${config.foundationType.replace("-", " ")}</div>
+              <div class="spec-item"><strong>Lumber Grade:</strong> ${config.lumberGrade.replace("-", " ")}</div>
               <div class="spec-item"><strong>Joist Spacing:</strong> ${config.joistSpacing}" O.C.</div>
               <div class="spec-item"><strong>Stud Size:</strong> ${config.studSize}</div>
               <div class="spec-item"><strong>Wall Height:</strong> ${config.wallHeight}'</div>
               <div class="spec-item"><strong>Doors:</strong> ${config.doorCount}</div>
               <div class="spec-item"><strong>Windows:</strong> ${config.windowCount}</div>
-              <div class="spec-item"><strong>Siding:</strong> ${config.sidingType.replace('-', ' ')}</div>
-              <div class="spec-item"><strong>Roofing:</strong> ${config.roofingType.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Siding:</strong> ${config.sidingType.replace("-", " ")}</div>
+              <div class="spec-item"><strong>Roofing:</strong> ${config.roofingType.replace("-", " ")}</div>
             </div>
           </div>
         </div>
       `);
 
       // Add Page 2: Cut List
-      const studCount = Math.ceil((config.length + config.width) * 2 / 1.33);
-      const joistCount = Math.ceil(config.length * 12 / config.joistSpacing) + 1;
-      
+      const studCount = Math.ceil(((config.length + config.width) * 2) / 1.33);
+      const joistCount =
+        Math.ceil((config.length * 12) / config.joistSpacing) + 1;
+
       printWindow.document.write(`
         <div class="print-page page-break">
           <div class="print-header">
@@ -549,7 +680,7 @@ export default function ShedDesigner() {
                 </thead>
                 <tbody>
                   <tr><td>${config.length}'</td><td>4</td><td>Front/back plates</td><td></td></tr>
-                  <tr><td>${config.width - 3.5/12}'</td><td>4</td><td>Side plates</td><td></td></tr>
+                  <tr><td>${config.width - 3.5 / 12}'</td><td>4</td><td>Side plates</td><td></td></tr>
                 </tbody>
               </table>
             </div>
@@ -581,13 +712,16 @@ export default function ShedDesigner() {
       `);
 
       // Add Page 3: Material List
-      const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
+      const totalCost = materials.reduce(
+        (sum, material) => sum + material.estimatedPrice,
+        0,
+      );
       const materialCategories = [
-        { name: 'Lumber & Wood Products', materials: lumberMaterials },
-        { name: 'Hardware & Fasteners', materials: hardwareMaterials },
-        { name: 'Roofing Materials', materials: roofingMaterials },
-        { name: 'Siding & Trim', materials: sidingMaterials },
-        { name: 'Foundation Materials', materials: foundationMaterials }
+        { name: "Lumber & Wood Products", materials: lumberMaterials },
+        { name: "Hardware & Fasteners", materials: hardwareMaterials },
+        { name: "Roofing Materials", materials: roofingMaterials },
+        { name: "Siding & Trim", materials: sidingMaterials },
+        { name: "Foundation Materials", materials: foundationMaterials },
       ];
 
       printWindow.document.write(`
@@ -606,7 +740,7 @@ export default function ShedDesigner() {
           <div class="materials-section">
       `);
 
-      materialCategories.forEach(category => {
+      materialCategories.forEach((category) => {
         if (category.materials.length > 0) {
           printWindow.document.write(`
             <div class="material-category">
@@ -617,8 +751,8 @@ export default function ShedDesigner() {
                 </thead>
                 <tbody>
           `);
-          
-          category.materials.forEach(material => {
+
+          category.materials.forEach((material) => {
             printWindow.document.write(`
               <tr>
                 <td>${material.name}</td>
@@ -629,7 +763,7 @@ export default function ShedDesigner() {
               </tr>
             `);
           });
-          
+
           printWindow.document.write(`
                 </tbody>
               </table>
@@ -659,15 +793,16 @@ export default function ShedDesigner() {
 
     toast({
       title: "Printing Complete Package",
-      description: "Opening print dialog with blueprints, cut list, and shopping list.",
+      description:
+        "Opening print dialog with blueprints, cut list, and shopping list.",
     });
   };
 
   const handlePrintPlans = () => {
     const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
-    
+
     // Create a new window for printing with the print layout
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    const printWindow = window.open("", "_blank", "width=800,height=600");
     if (printWindow) {
       // Get the print stylesheet
       const printStyles = `
@@ -731,7 +866,7 @@ export default function ShedDesigner() {
               <div><strong>Project:</strong> ${config.name}</div>
               <div><strong>Dimensions:</strong> ${config.length}' × ${config.width}' × ${config.wallHeight}'</div>
               <div><strong>Roof Type:</strong> ${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)}</div>
-              <div><strong>Foundation:</strong> ${config.foundationType.replace('-', ' ')}</div>
+              <div><strong>Foundation:</strong> ${config.foundationType.replace("-", " ")}</div>
               <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
             </div>
           </div>
@@ -765,15 +900,15 @@ export default function ShedDesigner() {
           <div class="specifications">
             <h2>Specifications</h2>
             <div class="spec-grid">
-              <div class="spec-item"><strong>Foundation Type:</strong> ${config.foundationType.replace('-', ' ')}</div>
-              <div class="spec-item"><strong>Lumber Grade:</strong> ${config.lumberGrade.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Foundation Type:</strong> ${config.foundationType.replace("-", " ")}</div>
+              <div class="spec-item"><strong>Lumber Grade:</strong> ${config.lumberGrade.replace("-", " ")}</div>
               <div class="spec-item"><strong>Joist Spacing:</strong> ${config.joistSpacing}" O.C.</div>
               <div class="spec-item"><strong>Stud Size:</strong> ${config.studSize}</div>
               <div class="spec-item"><strong>Wall Height:</strong> ${config.wallHeight}'</div>
               <div class="spec-item"><strong>Doors:</strong> ${config.doorCount}</div>
               <div class="spec-item"><strong>Windows:</strong> ${config.windowCount}</div>
-              <div class="spec-item"><strong>Siding:</strong> ${config.sidingType.replace('-', ' ')}</div>
-              <div class="spec-item"><strong>Roofing:</strong> ${config.roofingType.replace('-', ' ')}</div>
+              <div class="spec-item"><strong>Siding:</strong> ${config.sidingType.replace("-", " ")}</div>
+              <div class="spec-item"><strong>Roofing:</strong> ${config.roofingType.replace("-", " ")}</div>
             </div>
           </div>
         </div>
@@ -781,8 +916,8 @@ export default function ShedDesigner() {
 
       // Add Page 2: Cut List
       const materials = calculateMaterials(config);
-      const lumberMaterials = materials.filter(m => m.category === "lumber");
-      
+      const lumberMaterials = materials.filter((m) => m.category === "lumber");
+
       printWindow.document.write(`
         <div class="print-page page-break">
           <div class="print-header">
@@ -799,7 +934,9 @@ export default function ShedDesigner() {
       // Generate specific cut list
       if (lumberMaterials.length > 0) {
         // Wall Studs
-        const studCount = Math.ceil((config.length + config.width) * 2 / 1.33);
+        const studCount = Math.ceil(
+          ((config.length + config.width) * 2) / 1.33,
+        );
         printWindow.document.write(`
           <div class="cut-list-item">
             <h3>2x4 Wall Studs</h3>
@@ -824,14 +961,15 @@ export default function ShedDesigner() {
               </thead>
               <tbody>
                 <tr><td>${config.length}'</td><td>4</td><td>Front/back plates</td><td></td></tr>
-                <tr><td>${config.width - 3.5/12}'</td><td>4</td><td>Side plates</td><td></td></tr>
+                <tr><td>${config.width - 3.5 / 12}'</td><td>4</td><td>Side plates</td><td></td></tr>
               </tbody>
             </table>
           </div>
         `);
 
         // Floor Joists
-        const joistCount = Math.ceil(config.length * 12 / config.joistSpacing) + 1;
+        const joistCount =
+          Math.ceil((config.length * 12) / config.joistSpacing) + 1;
         printWindow.document.write(`
           <div class="cut-list-item">
             <h3>2x8 Floor Joists</h3>
@@ -847,10 +985,11 @@ export default function ShedDesigner() {
         `);
 
         // Rafters
-        const rafterLength = config.roofType === 'gable' 
-          ? Math.sqrt(Math.pow(config.width / 2, 2) + Math.pow(2, 2))
-          : config.width / Math.cos(Math.PI / 12);
-        const rafterCount = Math.ceil(config.length * 12 / 24) + 1;
+        const rafterLength =
+          config.roofType === "gable"
+            ? Math.sqrt(Math.pow(config.width / 2, 2) + Math.pow(2, 2))
+            : config.width / Math.cos(Math.PI / 12);
+        const rafterCount = Math.ceil((config.length * 12) / 24) + 1;
         printWindow.document.write(`
           <div class="cut-list-item">
             <h3>2x6 Roof Rafters</h3>
@@ -882,13 +1021,31 @@ export default function ShedDesigner() {
       `);
 
       // Add Page 3: Material List
-      const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
+      const totalCost = materials.reduce(
+        (sum, material) => sum + material.estimatedPrice,
+        0,
+      );
       const materialCategories = [
-        { name: 'Lumber & Wood Products', materials: materials.filter(m => m.category === "lumber") },
-        { name: 'Hardware & Fasteners', materials: materials.filter(m => m.category === "hardware") },
-        { name: 'Roofing Materials', materials: materials.filter(m => m.category === "roofing") },
-        { name: 'Siding & Trim', materials: materials.filter(m => m.category === "siding") },
-        { name: 'Foundation Materials', materials: materials.filter(m => m.category === "foundation") }
+        {
+          name: "Lumber & Wood Products",
+          materials: materials.filter((m) => m.category === "lumber"),
+        },
+        {
+          name: "Hardware & Fasteners",
+          materials: materials.filter((m) => m.category === "hardware"),
+        },
+        {
+          name: "Roofing Materials",
+          materials: materials.filter((m) => m.category === "roofing"),
+        },
+        {
+          name: "Siding & Trim",
+          materials: materials.filter((m) => m.category === "siding"),
+        },
+        {
+          name: "Foundation Materials",
+          materials: materials.filter((m) => m.category === "foundation"),
+        },
       ];
 
       printWindow.document.write(`
@@ -907,7 +1064,7 @@ export default function ShedDesigner() {
           <div class="materials-section">
       `);
 
-      materialCategories.forEach(category => {
+      materialCategories.forEach((category) => {
         if (category.materials.length > 0) {
           printWindow.document.write(`
             <div class="material-category">
@@ -918,8 +1075,8 @@ export default function ShedDesigner() {
                 </thead>
                 <tbody>
           `);
-          
-          category.materials.forEach(material => {
+
+          category.materials.forEach((material) => {
             printWindow.document.write(`
               <tr>
                 <td>${material.name}</td>
@@ -930,7 +1087,7 @@ export default function ShedDesigner() {
               </tr>
             `);
           });
-          
+
           printWindow.document.write(`
                 </tbody>
               </table>
@@ -956,22 +1113,23 @@ export default function ShedDesigner() {
         </body>
         </html>
       `);
-      
+
       printWindow.document.close();
       printWindow.print();
       printWindow.close();
     }
-    
+
     toast({
       title: "Printing Plans",
-      description: "Opening print dialog with comprehensive plans, cut list, and material list.",
+      description:
+        "Opening print dialog with comprehensive plans, cut list, and material list.",
     });
   };
 
   const handleShare = async () => {
     // Generate shareable link
     const shareUrl = `${window.location.origin}?config=${encodeURIComponent(JSON.stringify(config))}`;
-    
+
     try {
       if (navigator.share) {
         await navigator.share({
@@ -988,7 +1146,7 @@ export default function ShedDesigner() {
       }
     } catch (error) {
       // Handle share cancellation or other errors silently
-      if (error instanceof Error && error.name !== 'AbortError') {
+      if (error instanceof Error && error.name !== "AbortError") {
         // Fallback to clipboard copy if share API fails
         try {
           await navigator.clipboard.writeText(shareUrl);
@@ -1017,7 +1175,9 @@ export default function ShedDesigner() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Package className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-neutral-900">ShedBuilder Pro</h1>
+              <h1 className="text-xl font-bold text-neutral-900">
+                Shed Designer
+              </h1>
             </div>
             <Button size="sm" onClick={handleShare}>
               <ExternalLink className="h-4 w-4 mr-2" />
@@ -1026,19 +1186,23 @@ export default function ShedDesigner() {
           </div>
         </div>
       </header>
-      
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">
-          
           {/* Templates Section - moved to top */}
           <div className="bg-white rounded-lg shadow-material p-6">
             <h3 className="font-medium text-neutral-900 mb-3">Templates</h3>
-            <p className="text-sm text-neutral-600 mb-4">Start with a pre-designed template or continue customizing your current design</p>
+            <p className="text-sm text-neutral-600 mb-4">
+              Choose a template
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {templatesLoading ? (
                 <div className="col-span-full space-y-3">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="h-16 bg-white rounded-lg animate-pulse" />
+                    <div
+                      key={i}
+                      className="h-16 bg-white rounded-lg animate-pulse"
+                    />
                   ))}
                 </div>
               ) : (
@@ -1050,10 +1214,16 @@ export default function ShedDesigner() {
                     onClick={() => handleTemplateSelect(template)}
                   >
                     <div className="w-full">
-                      <div className="font-medium text-sm mb-1">{template.name}</div>
+                      <div className="font-medium text-sm mb-1">
+                        {template.name}
+                      </div>
                       <div className="text-xs text-neutral-500 flex justify-between">
-                        <span>{template.length}×{template.width} ft</span>
-                        <span className="capitalize">{template.templateCategory}</span>
+                        <span>
+                          {template.length}×{template.width} ft
+                        </span>
+                        <span className="capitalize">
+                          {template.templateCategory}
+                        </span>
                       </div>
                     </div>
                   </Button>
@@ -1064,158 +1234,211 @@ export default function ShedDesigner() {
 
           {/* Quick Dimensions Section - moved under templates */}
           <div className="bg-white rounded-lg shadow-material p-6">
-            <h3 className="font-medium text-neutral-900 mb-4">Custom Dimensions</h3>
+            <h3 className="font-medium text-neutral-900 mb-4">Dimensions</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <Label className="block text-sm text-neutral-600 mb-1">Length</Label>
+                <Label className="block text-sm text-neutral-600 mb-1">
+                  Length
+                </Label>
                 <Input
                   type="number"
                   min="4"
                   max="40"
                   value={config.length}
-                  onChange={(e) => handleConfigChange({ length: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    handleConfigChange({ length: parseFloat(e.target.value) })
+                  }
                   className="text-center"
                 />
                 <span className="text-xs text-neutral-500">feet</span>
               </div>
               <div className="text-center">
-                <Label className="block text-sm text-neutral-600 mb-1">Width</Label>
+                <Label className="block text-sm text-neutral-600 mb-1">
+                  Width
+                </Label>
                 <Input
                   type="number"
                   min="4"
                   max="40"
                   value={config.width}
-                  onChange={(e) => handleConfigChange({ width: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    handleConfigChange({ width: parseFloat(e.target.value) })
+                  }
                   className="text-center"
                 />
                 <span className="text-xs text-neutral-500">feet</span>
               </div>
               <div className="text-center">
-                <Label className="block text-sm text-neutral-600 mb-1">Height</Label>
+                <Label className="block text-sm text-neutral-600 mb-1">
+                  Height
+                </Label>
                 <Input
                   type="number"
                   min="6"
                   max="16"
                   value={config.height}
-                  onChange={(e) => handleConfigChange({ height: parseFloat(e.target.value) })}
+                  onChange={(e) =>
+                    handleConfigChange({ height: parseFloat(e.target.value) })
+                  }
                   className="text-center"
                 />
                 <span className="text-xs text-neutral-500">feet</span>
               </div>
             </div>
           </div>
-          
+
           {/* Main Design Panel */}
           <div>
             <div className="bg-white rounded-lg shadow-material p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-medium text-neutral-900">Blueprint Views</h2>
+                <h2 className="text-xl font-medium text-neutral-900">
+                  Blueprint Views
+                </h2>
               </div>
-              
-              {/* Blueprint Visualization */}
-              <Shed3DViewer 
-                config={config}
-              />
-              
 
+              {/* Blueprint Visualization */}
+              <Shed3DViewer config={config} />
             </div>
-            
+
             {/* Configuration Tabs */}
             <div className="mt-6">
-              <ConfigurationTabs 
+              <ConfigurationTabs
                 config={config}
                 onConfigChange={handleConfigChange}
               />
             </div>
           </div>
-          
+
           {/* Shopping List Section */}
           <div className="bg-white rounded-lg shadow-material p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-neutral-900">
-                  Shopping List - {config.length}×{config.width} {config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof Shed
-                </h3>
-              </div>
-              
-              {/* Quick Cost Summary */}
-              <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20 mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <div>
-                    <h4 className="font-medium text-neutral-900">Project Estimate</h4>
-                    <p className="text-sm text-neutral-600">{config.length}×{config.width} {config.roofType} roof shed</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary">
-                      ${calculateMaterials(config, selectedStore).reduce((sum, material) => sum + material.estimatedPrice, 0).toFixed(2)}
-                    </div>
-                    <p className="text-sm text-neutral-600">materials only</p>
-                  </div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-medium text-neutral-900">
+                Shopping List - {config.length}×{config.width}{" "}
+                {config.roofType.charAt(0).toUpperCase() +
+                  config.roofType.slice(1)}{" "}
+                Roof Shed
+              </h3>
+            </div>
+
+            {/* Quick Cost Summary */}
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 rounded-lg border border-primary/20 mb-6">
+              <div className="flex justify-between items-center mb-3">
+                <div>
+                  <h4 className="font-medium text-neutral-900">
+                    Project Estimate
+                  </h4>
+                  <p className="text-sm text-neutral-600">
+                    {config.length}×{config.width} {config.roofType} roof shed
+                  </p>
                 </div>
-                
-                {/* Category Subtotals */}
-                <div className="space-y-2 mb-3">
-                  {(() => {
-                    const materials = calculateMaterials(config, selectedStore);
-                    const categorizedMaterials = materials.reduce((acc, material) => {
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-primary">
+                    $
+                    {calculateMaterials(config, selectedStore)
+                      .reduce(
+                        (sum, material) => sum + material.estimatedPrice,
+                        0,
+                      )
+                      .toFixed(2)}
+                  </div>
+                  <p className="text-sm text-neutral-600">materials only</p>
+                </div>
+              </div>
+
+              {/* Category Subtotals */}
+              <div className="space-y-2 mb-3">
+                {(() => {
+                  const materials = calculateMaterials(config, selectedStore);
+                  const categorizedMaterials = materials.reduce(
+                    (acc, material) => {
                       if (!acc[material.category]) acc[material.category] = [];
                       acc[material.category].push(material);
                       return acc;
-                    }, {} as Record<string, typeof materials>);
+                    },
+                    {} as Record<string, typeof materials>,
+                  );
 
-                    const categoryTotals = Object.entries(categorizedMaterials).map(([category, items]) => ({
-                      category,
-                      total: items.reduce((sum, item) => sum + item.estimatedPrice, 0),
-                    }));
+                  const categoryTotals = Object.entries(
+                    categorizedMaterials,
+                  ).map(([category, items]) => ({
+                    category,
+                    total: items.reduce(
+                      (sum, item) => sum + item.estimatedPrice,
+                      0,
+                    ),
+                  }));
 
-                    const categoryLabels: Record<string, string> = {
-                      lumber: "Lumber & Framing",
-                      hardware: "Hardware & Fasteners", 
-                      roofing: "Roofing Materials",
-                      siding: "Siding & Trim",
-                      foundation: "Foundation",
-                    };
+                  const categoryLabels: Record<string, string> = {
+                    lumber: "Lumber & Framing",
+                    hardware: "Hardware & Fasteners",
+                    roofing: "Roofing Materials",
+                    siding: "Siding & Trim",
+                    foundation: "Foundation",
+                  };
 
-                    return categoryTotals.map(({ category, total }) => (
-                      <div key={category} className="flex justify-between items-center text-sm">
-                        <span className="text-neutral-600">{categoryLabels[category] || category}</span>
-                        <span className="font-medium">${total.toFixed(2)}</span>
-                      </div>
-                    ));
-                  })()}
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="zipCode" className="text-sm font-medium text-neutral-700">ZIP Code:</Label>
-                    <Input
-                      id="zipCode"
-                      type="text"
-                      value={zipCode}
-                      onChange={(e) => handleZipCodeChange(e.target.value)}
-                      placeholder="Enter ZIP"
-                      className="w-20 text-sm"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-neutral-700">Store:</label>
-                    <select 
-                      value={selectedStore} 
-                      onChange={(e) => setSelectedStore(e.target.value)}
-                      className="border border-neutral-300 rounded px-3 py-2 text-sm min-w-[200px]"
+                  return categoryTotals.map(({ category, total }) => (
+                    <div
+                      key={category}
+                      className="flex justify-between items-center text-sm"
                     >
-                      <option value="home-depot">Home Depot - South Austin (3.2 mi)</option>
-                      <option value="lowes">Lowe's - Sunset Valley (4.7 mi)</option>
-                      <option value="menards">Menards - Cedar Park (18.3 mi)</option>
-                    </select>
-                  </div>
-                </div>
+                      <span className="text-neutral-600">
+                        {categoryLabels[category] || category}
+                      </span>
+                      <span className="font-medium">${total.toFixed(2)}</span>
+                    </div>
+                  ));
+                })()}
               </div>
-              
-              {/* Shopping List in single column */}
-              <div className="mt-8">
-                <FullShoppingList config={config} selectedStore={selectedStore} zipCode={zipCode} />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Label
+                    htmlFor="zipCode"
+                    className="text-sm font-medium text-neutral-700"
+                  >
+                    ZIP Code:
+                  </Label>
+                  <Input
+                    id="zipCode"
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => handleZipCodeChange(e.target.value)}
+                    placeholder="Enter ZIP"
+                    className="w-20 text-sm"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-neutral-700">
+                    Store:
+                  </label>
+                  <select
+                    value={selectedStore}
+                    onChange={(e) => setSelectedStore(e.target.value)}
+                    className="border border-neutral-300 rounded px-3 py-2 text-sm min-w-[200px]"
+                  >
+                    <option value="home-depot">
+                      Home Depot - South Austin (3.2 mi)
+                    </option>
+                    <option value="lowes">
+                      Lowe's - Sunset Valley (4.7 mi)
+                    </option>
+                    <option value="menards">
+                      Menards - Cedar Park (18.3 mi)
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
-            
+
+            {/* Shopping List in single column */}
+            <div className="mt-8">
+              <FullShoppingList
+                config={config}
+                selectedStore={selectedStore}
+                zipCode={zipCode}
+              />
+            </div>
+          </div>
+
           {/* Store Availability */}
           <StoreAvailability zipCode={zipCode} />
         </div>
