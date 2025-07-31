@@ -1,0 +1,225 @@
+
+ShedBuilder Pro
+Share Design
+Shed Designer
+PLAN VIEW
+12' × 6'
+FRONT ELEVATION
+8'
+SIDE ELEVATION
+CROSS SECTION
+Foundation
+Floor Joists
+Templates
+Start with a pre-designed template or continue customizing your current design
+
+
+8x8 Basic Gable
+8×8 ft
+basic
+
+10x12 Barn Style
+12×10 ft
+storage
+
+8x10 Modern Shed
+10×8 ft
+workshop
+
+12x16 Hip Roof Garage
+16×12 ft
+garage
+
+6x12 Lean-to Storage
+12×6 ft
+storage
+
+10x14 Colonial Saltbox
+14×10 ft
+workshop
+Length
+12
+feet
+Width
+6
+feet
+Height
+8
+feet
+Foundation & Framing
+Walls & Siding
+Roofing
+Doors & Windows
+Foundation Type
+
+Concrete Slab (Recommended)
+
+Gravel Pad
+
+Concrete Piers
+Lumber Grade
+
+Pressure Treated (Recommended)
+Pressure treated recommended for sill plates and floor joists
+
+Joist Spacing
+
+16" on center (Standard)
+Wall Stud Size
+
+2x4" (Standard)
+Auto-Calculated Framing
+Floor Joists:5 pieces
+Wall Studs:35 pieces
+Top Plates:108 linear ft
+Joist Hangers:5 pieces
+Shopping List - 12×6 Lean-to Roof Shed
+Project Estimate
+12×6 lean-to roof shed
+
+$1575.07
+materials only
+
+Lumber & Framing
+$761.50
+Hardware & Fasteners
+$271.81
+Roofing Materials
+$65.00
+Siding & Trim
+$476.76
+ZIP Code:
+27529
+Store:
+
+Home Depot - South Austin (3.2 mi)
+Material Details
+Compare Prices
+Lumber & Wood Products
+2x8x12' pressure-treated Lumber
+SKU: HD285011 • Home Depot
+✓ In stock - 39 available
+5 pieces
+$25.96 ea
+$129.80
+2x8x10' pressure-treated Lumber
+SKU: HD826207 • Home Depot
+✓ In stock - 19 available
+4 pieces
+$12.98 ea
+$51.92
+2x4x8' pressure-treated Lumber
+SKU: HD772643 • Home Depot
+✓ In stock - 53 available
+35 pieces
+$4.98 ea
+$174.30
+2x4x10' pressure-treated Lumber
+SKU: HD938542 • Home Depot
+✓ In stock - 22 available
+11 pieces
+$4.98 ea
+$54.78
+4x8x5/8" OSB Sheathing
+SKU: HD527583 • Home Depot
+✓ In stock - 30 available
+3 sheets
+$24.98 ea
+$74.94
+4x8x1/2" OSB Sheathing
+SKU: HD252798 • Home Depot
+✓ In stock - 10 available
+9 sheets
+$22.98 ea
+$206.82
+4x8x1/2" OSB Sheathing
+SKU: HD416574 • Home Depot
+✓ In stock - 32 available
+3 sheets
+$22.98 ea
+$68.94
+Hardware & Fasteners
+2x8 Galvanized Joist Hangers
+SKU: HD688778 • Home Depot
+✗ Out of stock
+5 pieces
+$2.78 ea
+$13.90
+1-1/2" Joist Hanger Nails (5 lb)
+SKU: HD242249 • Home Depot
+✓ In stock - 53 available
+1 box
+$24.97 ea
+$24.97
+3" Galvanized Deck Screws (5 lb)
+SKU: HD613937 • Home Depot
+✓ In stock - 27 available
+1 boxes
+$28.97 ea
+$28.97
+Hurricane Ties (20 pack)
+SKU: HD367210 • Home Depot
+✗ Out of stock
+1 packs
+$18.97 ea
+$18.97
+32" Steel Entry Door
+SKU: HD957147 • Home Depot
+✓ In stock - 32 available
+1 pieces
+$185.00 ea
+$185.00
+Roofing Materials
+Ridge Cap Shingles
+SKU: HD866515 • Home Depot
+✓ In stock - 25 available
+1 bundles
+$65.00 ea
+$65.00
+Siding & Trim
+4x8 T1-11 Siding
+SKU: HD340096 • Home Depot
+✓ In stock - 10 available
+9 sheets
+$45.00 ea
+$405.00
+1x4x8' Pine Trim Board
+SKU: HD614481 • Home Depot
+⚠ Limited stock - 9 available
+8 pieces
+$8.97 ea
+$71.76
+Total Materials Cost
+$1575.07
+Order from Home Depot
+Print Complete Package
+Print Plans Only
+Store Availability
+HD
+Home Depot
+Local Store • 5.2 miles
+94% In Stock
+$1698.23
+L
+Lowe's
+Local Store • 6.8 miles
+87% In Stock
+$1612.89
+M
+Menards
+Regional Store • 15.4 miles
+91% In Stock
+$1567.45
+[plugin:runtime-error-plugin] materials is not defined
+/home/runner/workspace/client/src/pages/shed-designer.tsx:468:64
+466|                  <div><strong>Store:</strong> ${selectedStoreName}</div>
+467|                  <div><strong>Location:</strong> ${zipCode}</div>
+468|                  <div><strong>Total Estimated Cost:</strong> $${materials.reduce((sum, material) => sum + material.estimatedPrice, 0).toFixed(2)}</div>
+   |                                                                 ^
+469|                </div>
+470|              </div>
+    at handlePrintComplete /home/runner/workspace/client/src/pages/shed-designer.tsx:468:64
+    at handlePrintCompleteEvent /home/runner/workspace/client/src/pages/shed-designer.tsx:397:7
+    at handlePrintComplete /home/runner/workspace/client/src/pages/shed-designer.tsx:98:12
+Click outside, press Esc key, or fix the code to dismiss.
+You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
