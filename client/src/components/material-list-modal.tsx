@@ -27,11 +27,38 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
 
   const totalCost = materials.reduce((sum, material) => sum + material.estimatedPrice, 0);
 
-  const stores = {
-    "home-depot": { name: "Home Depot", url: "https://www.homedepot.com", skuPrefix: "HD" },
-    "lowes": { name: "Lowe's", url: "https://www.lowes.com", skuPrefix: "LW" },
-    "menards": { name: "Menards", url: "https://www.menards.com", skuPrefix: "MN" }
+  // Store location data with sample locations
+  const getStoreLocations = (zipCode: string) => {
+    // This would normally be an API call, but we'll use sample data based on common zip codes
+    const storesByZip: Record<string, any> = {
+      "78704": { // Austin, TX
+        "home-depot": { name: "Home Depot", url: "https://www.homedepot.com", skuPrefix: "HD", town: "South Austin", distance: 3.2 },
+        "lowes": { name: "Lowe's", url: "https://www.lowes.com", skuPrefix: "LW", town: "Sunset Valley", distance: 4.7 },
+        "menards": { name: "Menards", url: "https://www.menards.com", skuPrefix: "MN", town: "Cedar Park", distance: 18.3 }
+      },
+      "60601": { // Chicago, IL
+        "home-depot": { name: "Home Depot", url: "https://www.homedepot.com", skuPrefix: "HD", town: "Downtown Chicago", distance: 2.1 },
+        "lowes": { name: "Lowe's", url: "https://www.lowes.com", skuPrefix: "LW", town: "Lincoln Park", distance: 3.8 },
+        "menards": { name: "Menards", url: "https://www.menards.com", skuPrefix: "MN", town: "Schaumburg", distance: 28.4 }
+      },
+      "30309": { // Atlanta, GA
+        "home-depot": { name: "Home Depot", url: "https://www.homedepot.com", skuPrefix: "HD", town: "Midtown Atlanta", distance: 1.9 },
+        "lowes": { name: "Lowe's", url: "https://www.lowes.com", skuPrefix: "LW", town: "Buckhead", distance: 4.2 },
+        "menards": { name: "Menards", url: "https://www.menards.com", skuPrefix: "MN", town: "Not Available", distance: null }
+      }
+    };
+
+    // Default fallback for other zip codes
+    const defaultStores = {
+      "home-depot": { name: "Home Depot", url: "https://www.homedepot.com", skuPrefix: "HD", town: "Local Store", distance: 5.2 },
+      "lowes": { name: "Lowe's", url: "https://www.lowes.com", skuPrefix: "LW", town: "Local Store", distance: 6.8 },
+      "menards": { name: "Menards", url: "https://www.menards.com", skuPrefix: "MN", town: "Regional Store", distance: 15.4 }
+    };
+
+    return storesByZip[zipCode] || defaultStores;
   };
+
+  const stores = getStoreLocations(zipCode);
 
   const handleOrderFromStore = () => {
     window.open(stores[selectedStore as keyof typeof stores].url, "_blank");
@@ -195,13 +222,27 @@ export default function MaterialListModal({ isOpen, onClose, config, zipCode }: 
                 <SelectValue placeholder="Choose a store" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="home-depot">Home Depot</SelectItem>
-                <SelectItem value="lowes">Lowe's</SelectItem>
-                <SelectItem value="menards">Menards</SelectItem>
+                <SelectItem value="home-depot">
+                  Home Depot - {stores["home-depot"].town} 
+                  {stores["home-depot"].distance ? ` (${stores["home-depot"].distance} mi)` : " (Not Available)"}
+                </SelectItem>
+                <SelectItem value="lowes">
+                  Lowe's - {stores["lowes"].town} 
+                  {stores["lowes"].distance ? ` (${stores["lowes"].distance} mi)` : " (Not Available)"}
+                </SelectItem>
+                <SelectItem value="menards">
+                  Menards - {stores["menards"].town} 
+                  {stores["menards"].distance ? ` (${stores["menards"].distance} mi)` : " (Not Available)"}
+                </SelectItem>
               </SelectContent>
             </Select>
             <div className="text-sm text-neutral-600">
-              Pricing and ordering will be customized for {stores[selectedStore as keyof typeof stores].name}
+              {stores[selectedStore as keyof typeof stores].distance ? (
+                <>Pricing for {stores[selectedStore as keyof typeof stores].name} in {stores[selectedStore as keyof typeof stores].town} 
+                ({stores[selectedStore as keyof typeof stores].distance} miles away)</>
+              ) : (
+                <>{stores[selectedStore as keyof typeof stores].name} not available in your area</>
+              )}
             </div>
           </div>
         </div>
