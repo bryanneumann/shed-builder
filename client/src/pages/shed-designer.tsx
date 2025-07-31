@@ -613,7 +613,6 @@ export default function ShedDesigner() {
                 ${generatePlanViewSVG(config)}
               </div>
               <div class="blueprint-item">
-                <h3>FRONT ELEVATION</h3>
                 ${generateFrontElevationSVG(config)}
               </div>
               <div class="blueprint-item">
@@ -1192,9 +1191,7 @@ export default function ShedDesigner() {
           {/* Templates Section - moved to top */}
           <div className="bg-white rounded-lg shadow-material p-6">
             <h3 className="font-medium text-neutral-900 mb-3">Templates</h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Choose a template
-            </p>
+            <p className="text-sm text-neutral-600 mb-4">Choose a template</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {templatesLoading ? (
                 <div className="col-span-full space-y-3">
