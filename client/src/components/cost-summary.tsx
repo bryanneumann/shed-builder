@@ -60,7 +60,7 @@ export default function CostSummary({
             className="h-auto p-0 ml-2 text-primary"
             onClick={() => {
               const newZip = prompt("Enter your ZIP code:", zipCode);
-              if (newZip) onZipCodeChange(newZip);
+              if (newZip && newZip.trim()) onZipCodeChange(newZip.trim());
             }}
           >
             Change
