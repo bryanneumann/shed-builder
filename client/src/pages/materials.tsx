@@ -195,13 +195,10 @@ export default function Materials() {
                   </div>
                   
                   <div className="pt-2 border-t">
-                    <div className="flex justify-between items-center">
+                    <div className="text-center">
                       <span className="text-sm font-medium text-green-600">
                         Best Price: ${getLowestPrice(material)} per {material.unit}
                       </span>
-                      <Button size="sm" disabled={!material.inStock}>
-                        Add to List
-                      </Button>
                     </div>
                   </div>
                 </div>
