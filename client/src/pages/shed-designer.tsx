@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { calculateMaterials } from "@/lib/shed-calculations";
 import { Package, Wrench, ExternalLink, Printer, BarChart3, Filter } from "lucide-react";
-import { Link } from "wouter";
-import AppHeader from "@/components/app-header";
+
+
 import Shed3DViewer from "@/components/shed-3d-viewer";
 import ConfigurationTabs from "@/components/configuration-tabs";
 
@@ -982,7 +982,23 @@ export default function ShedDesigner() {
 
   return (
     <div className="min-h-screen bg-neutral-100">
-      <AppHeader />
+      {/* Simple Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Package className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="text-xl font-bold text-neutral-900">ShedBuilder Pro</h1>
+            </div>
+            <Button size="sm" onClick={handleShare}>
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Share Design
+            </Button>
+          </div>
+        </div>
+      </header>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
