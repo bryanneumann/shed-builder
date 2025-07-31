@@ -75,30 +75,32 @@ export function generatePlanViewSVG(config: ShedConfig): string {
       
       <!-- Doors -->
       ${Array.from({ length: doorCount }, (_, i) => {
-        const doorX = 80 + wallThickness + (i + 1) * (totalWidth - wallThickness * 2) / (doorCount + 1) - doorWidth / 2;
+        const spacing = (totalWidth - wallThickness * 2) / (doorCount + 1);
+        const doorX = 80 + wallThickness + spacing * (i + 1) - doorWidth / 2;
         return `
           <rect x="${doorX}" y="80" width="${doorWidth}" height="${wallThickness}" fill="#FFFFFF" stroke="#000" stroke-width="2"/>
-          <text x="${doorX + doorWidth/2}" y="${80 + wallThickness + 20}" text-anchor="middle" font-size="12" font-weight="bold" fill="#000">DOOR ${i+1}</text>
-          <text x="${doorX + doorWidth/2}" y="${80 + wallThickness + 35}" text-anchor="middle" font-size="10" fill="#666">32" × 80"</text>
-          <path d="M ${doorX + 8} ${80 + wallThickness} Q ${doorX + doorWidth - 8} ${80 + wallThickness + 25} ${doorX + doorWidth - 8} ${80 + wallThickness}" 
-                stroke="#000" fill="none" stroke-width="2"/>
+          <text x="${doorX + doorWidth/2}" y="${80 + wallThickness + 25}" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">DOOR ${i+1}</text>
+          <text x="${doorX + doorWidth/2}" y="${80 + wallThickness + 40}" text-anchor="middle" font-size="9" fill="#666">32" × 80"</text>
+          <path d="M ${doorX + 10} ${80 + wallThickness} Q ${doorX + doorWidth - 10} ${80 + wallThickness + 30} ${doorX + doorWidth - 10} ${80 + wallThickness}" 
+                stroke="#000" fill="none" stroke-width="1"/>
           <!-- Door frame studs -->
-          <rect x="${doorX - 1.5}" y="80" width="3" height="${wallThickness}" fill="#8B4513"/>
-          <rect x="${doorX + doorWidth - 1.5}" y="80" width="3" height="${wallThickness}" fill="#8B4513"/>
+          <rect x="${doorX - 2}" y="80" width="3" height="${wallThickness}" fill="#8B4513"/>
+          <rect x="${doorX + doorWidth - 1}" y="80" width="3" height="${wallThickness}" fill="#8B4513"/>
         `;
       }).join('')}
       
       <!-- Windows -->
       ${Array.from({ length: windowCount }, (_, i) => {
-        const windowX = 80 + wallThickness + (i + 1) * (totalWidth - wallThickness * 2) / (windowCount + 2) - windowWidth / 2;
+        const spacing = (totalWidth - wallThickness * 2) / (windowCount + 1);
+        const windowX = 80 + wallThickness + spacing * (i + 1) - windowWidth / 2;
         const windowY = 80 + totalHeight - wallThickness;
         return `
           <rect x="${windowX}" y="${windowY}" width="${windowWidth}" height="${wallThickness}" fill="#E6F3FF" stroke="#000" stroke-width="2"/>
-          <text x="${windowX + windowWidth/2}" y="${windowY - 10}" text-anchor="middle" font-size="12" font-weight="bold" fill="#000">WIN ${i+1}</text>
-          <text x="${windowX + windowWidth/2}" y="${windowY + wallThickness + 15}" text-anchor="middle" font-size="10" fill="#666">24" × 36"</text>
+          <text x="${windowX + windowWidth/2}" y="${windowY - 15}" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">WIN ${i+1}</text>
+          <text x="${windowX + windowWidth/2}" y="${windowY + wallThickness + 20}" text-anchor="middle" font-size="9" fill="#666">24" × 36"</text>
           <!-- Window frame studs -->
-          <rect x="${windowX - 1.5}" y="${windowY}" width="3" height="${wallThickness}" fill="#8B4513"/>
-          <rect x="${windowX + windowWidth - 1.5}" y="${windowY}" width="3" height="${wallThickness}" fill="#8B4513"/>
+          <rect x="${windowX - 2}" y="${windowY}" width="3" height="${wallThickness}" fill="#8B4513"/>
+          <rect x="${windowX + windowWidth - 1}" y="${windowY}" width="3" height="${wallThickness}" fill="#8B4513"/>
         `;
       }).join('')}
       
@@ -231,39 +233,43 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
       ${config.doorCount > 0 ? `
         <!-- Door -->
         <rect 
-          x="${80 + totalWidth/2 - 16}" 
-          y="${200 - (wallHeight * 30)}" 
-          width="32" 
-          height="${wallHeight * 30}"
+          x="${80 + totalWidth/2 - 20}" 
+          y="${200 - totalHeight + 20}" 
+          width="40" 
+          height="${totalHeight - 20}"
           fill="#8b5cf6" 
           stroke="#7c3aed" 
           stroke-width="2"
         />
-        <!-- Door frame -->
-        <rect x="${80 + totalWidth/2 - 18}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
-        <rect x="${80 + totalWidth/2 + 15}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <!-- Door frame studs -->
+        <rect x="${80 + totalWidth/2 - 23}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <rect x="${80 + totalWidth/2 + 20}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
         <!-- Door header -->
-        <rect x="${80 + totalWidth/2 - 18}" y="${200 - totalHeight}" width="36" height="8" fill="#654321"/>
-        <text x="${80 + totalWidth/2}" y="${200 + 30}" text-anchor="middle" font-size="12" font-weight="bold">32" DOOR</text>
+        <rect x="${80 + totalWidth/2 - 23}" y="${200 - totalHeight + 17}" width="46" height="8" fill="#654321"/>
+        <text x="${80 + totalWidth/2}" y="${200 + 35}" text-anchor="middle" font-size="11" font-weight="bold">36" DOOR</text>
       ` : ''}
       
-      ${Array.from({ length: Math.min(config.windowCount, 2) }).map((_, i) => `
+      ${Array.from({ length: Math.min(config.windowCount, 2) }).map((_, i) => {
+        const spacing = totalWidth / (Math.min(config.windowCount, 2) + 1);
+        const windowX = 80 + spacing * (i + 1) - 15;
+        return `
         <rect 
-          x="${80 + (totalWidth/3) + (i * totalWidth/3) - 12}" 
-          y="${200 - totalHeight + 30}" 
-          width="24" 
-          height="18"
+          x="${windowX}" 
+          y="${200 - totalHeight + 35}" 
+          width="30" 
+          height="20"
           fill="#3b82f6" 
           stroke="#1e40af" 
           stroke-width="2"
         />
-        <!-- Window frame -->
-        <rect x="${80 + (totalWidth/3) + (i * totalWidth/3) - 14}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
-        <rect x="${80 + (totalWidth/3) + (i * totalWidth/3) + 11}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <!-- Window frame studs -->
+        <rect x="${windowX - 3}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <rect x="${windowX + 30}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
         <!-- Window header -->
-        <rect x="${80 + (totalWidth/3) + (i * totalWidth/3) - 14}" y="${200 - totalHeight + 28}" width="28" height="6" fill="#654321"/>
-        <text x="${80 + (totalWidth/3) + (i * totalWidth/3)}" y="${200 + 30}" text-anchor="middle" font-size="10">24" WIN</text>
-      `).join('')}
+        <rect x="${windowX - 3}" y="${200 - totalHeight + 32}" width="36" height="8" fill="#654321"/>
+        <text x="${windowX + 15}" y="${200 + 35}" text-anchor="middle" font-size="10">30" WIN</text>
+      `;
+      }).join('')}
       
       <!-- Dimensions -->
       <g stroke="#000" fill="#000" font-size="14" font-weight="bold">
@@ -401,21 +407,22 @@ export function generateSideElevationSVG(config: ShedConfig): string {
       ${getSideRoofSVG(config, 80, 200 - totalHeight, totalWidth, scale)}
       
       ${config.windowCount > 0 ? `
+        <!-- Window -->
         <rect 
-          x="${80 + totalWidth/2 - 12}" 
-          y="${200 - totalHeight + 30}" 
-          width="24" 
-          height="18"
+          x="${80 + totalWidth/2 - 15}" 
+          y="${200 - totalHeight + 35}" 
+          width="30" 
+          height="20"
           fill="#3b82f6" 
           stroke="#1e40af" 
           stroke-width="2"
         />
-        <!-- Window frame -->
-        <rect x="${80 + totalWidth/2 - 14}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
-        <rect x="${80 + totalWidth/2 + 11}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <!-- Window frame studs -->
+        <rect x="${80 + totalWidth/2 - 18}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <rect x="${80 + totalWidth/2 + 15}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
         <!-- Window header -->
-        <rect x="${80 + totalWidth/2 - 14}" y="${200 - totalHeight + 28}" width="28" height="6" fill="#654321"/>
-        <text x="${80 + totalWidth/2}" y="${200 + 30}" text-anchor="middle" font-size="10">24" WINDOW</text>
+        <rect x="${80 + totalWidth/2 - 18}" y="${200 - totalHeight + 32}" width="36" height="8" fill="#654321"/>
+        <text x="${80 + totalWidth/2}" y="${200 + 35}" text-anchor="middle" font-size="10">30" WINDOW</text>
       ` : ''}
       
       <!-- Dimensions -->
