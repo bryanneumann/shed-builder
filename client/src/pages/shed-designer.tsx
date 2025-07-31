@@ -1030,11 +1030,86 @@ export default function ShedDesigner() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">
           
+          {/* Templates Section - moved to top */}
+          <div className="bg-white rounded-lg shadow-material p-6">
+            <h3 className="font-medium text-neutral-900 mb-3">Templates</h3>
+            <p className="text-sm text-neutral-600 mb-4">Start with a pre-designed template or continue customizing your current design</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {templatesLoading ? (
+                <div className="col-span-full space-y-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="h-16 bg-white rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                (templates as ShedDesign[]).map((template: ShedDesign) => (
+                  <Button
+                    key={template.id}
+                    variant="outline"
+                    className="p-3 h-auto text-left justify-start hover:bg-white bg-white"
+                    onClick={() => handleTemplateSelect(template)}
+                  >
+                    <div className="w-full">
+                      <div className="font-medium text-sm mb-1">{template.name}</div>
+                      <div className="text-xs text-neutral-500 flex justify-between">
+                        <span>{template.length}×{template.width} ft</span>
+                        <span className="capitalize">{template.templateCategory}</span>
+                      </div>
+                    </div>
+                  </Button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Quick Dimensions Section - moved under templates */}
+          <div className="bg-white rounded-lg shadow-material p-6">
+            <h3 className="font-medium text-neutral-900 mb-4">Custom Dimensions</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <Label className="block text-sm text-neutral-600 mb-1">Length</Label>
+                <Input
+                  type="number"
+                  min="4"
+                  max="40"
+                  value={config.length}
+                  onChange={(e) => handleConfigChange({ length: parseFloat(e.target.value) })}
+                  className="text-center"
+                />
+                <span className="text-xs text-neutral-500">feet</span>
+              </div>
+              <div className="text-center">
+                <Label className="block text-sm text-neutral-600 mb-1">Width</Label>
+                <Input
+                  type="number"
+                  min="4"
+                  max="40"
+                  value={config.width}
+                  onChange={(e) => handleConfigChange({ width: parseFloat(e.target.value) })}
+                  className="text-center"
+                />
+                <span className="text-xs text-neutral-500">feet</span>
+              </div>
+              <div className="text-center">
+                <Label className="block text-sm text-neutral-600 mb-1">Height</Label>
+                <Input
+                  type="number"
+                  min="6"
+                  max="16"
+                  value={config.height}
+                  onChange={(e) => handleConfigChange({ height: parseFloat(e.target.value) })}
+                  className="text-center"
+                />
+                <span className="text-xs text-neutral-500">feet</span>
+              </div>
+            </div>
+          </div>
+          
           {/* Main Design Panel */}
           <div>
             <div className="bg-white rounded-lg shadow-material p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-medium text-neutral-900">Shed Designer</h2>
+                <h2 className="text-xl font-medium text-neutral-900">Blueprint Views</h2>
               </div>
               
               {/* Blueprint Visualization */}
@@ -1042,77 +1117,7 @@ export default function ShedDesigner() {
                 config={config}
               />
               
-              {/* Templates Section - moved from side panel */}
-              <div className="mt-6 p-4 bg-neutral-50 rounded-lg border">
-                <h3 className="font-medium text-neutral-900 mb-3">Templates</h3>
-                <p className="text-sm text-neutral-600 mb-4">Start with a pre-designed template or continue customizing your current design</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {templatesLoading ? (
-                    <div className="col-span-full space-y-3">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="h-16 bg-white rounded-lg animate-pulse" />
-                      ))}
-                    </div>
-                  ) : (
-                    (templates as ShedDesign[]).map((template: ShedDesign) => (
-                      <Button
-                        key={template.id}
-                        variant="outline"
-                        className="p-3 h-auto text-left justify-start hover:bg-white bg-white"
-                        onClick={() => handleTemplateSelect(template)}
-                      >
-                        <div className="w-full">
-                          <div className="font-medium text-sm mb-1">{template.name}</div>
-                          <div className="text-xs text-neutral-500 flex justify-between">
-                            <span>{template.length}×{template.width} ft</span>
-                            <span className="capitalize">{template.templateCategory}</span>
-                          </div>
-                        </div>
-                      </Button>
-                    ))
-                  )}
-                </div>
-              </div>
-              
-              {/* Quick Dimensions */}
-              <div className="mt-6 grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <Label className="block text-sm text-neutral-600 mb-1">Length</Label>
-                  <Input
-                    type="number"
-                    min="4"
-                    max="40"
-                    value={config.length}
-                    onChange={(e) => handleConfigChange({ length: parseFloat(e.target.value) })}
-                    className="text-center"
-                  />
-                  <span className="text-xs text-neutral-500">feet</span>
-                </div>
-                <div className="text-center">
-                  <Label className="block text-sm text-neutral-600 mb-1">Width</Label>
-                  <Input
-                    type="number"
-                    min="4"
-                    max="40"
-                    value={config.width}
-                    onChange={(e) => handleConfigChange({ width: parseFloat(e.target.value) })}
-                    className="text-center"
-                  />
-                  <span className="text-xs text-neutral-500">feet</span>
-                </div>
-                <div className="text-center">
-                  <Label className="block text-sm text-neutral-600 mb-1">Height</Label>
-                  <Input
-                    type="number"
-                    min="6"
-                    max="16"
-                    value={config.height}
-                    onChange={(e) => handleConfigChange({ height: parseFloat(e.target.value) })}
-                    className="text-center"
-                  />
-                  <span className="text-xs text-neutral-500">feet</span>
-                </div>
-              </div>
+
             </div>
             
             {/* Configuration Tabs */}
