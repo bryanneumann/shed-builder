@@ -344,119 +344,381 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
 }
 
 export function generateSideElevationSVG(config: ShedConfig): string {
+  const scale = 40;
+  const wallHeight = config.wallHeight;
+  const totalWidth = config.width * scale;
+  const totalHeight = wallHeight * scale;
+  
+  // Wall studs for side view
+  const studSpacing = 16 * (scale / 12); // 16" on center
+  const studs = [];
+  for (let x = 80; x <= 80 + totalWidth; x += studSpacing) {
+    studs.push(`<rect x="${x - 0.75}" y="${200 - totalHeight}" width="1.5" height="${totalHeight}" fill="#8B4513"/>`);
+  }
+
   return `
-    <svg viewBox="0 0 200 140" style="width: 100%; height: 200px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 300} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+      <defs>
+        <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <circle cx="5" cy="5" r="2" fill="#000"/>
+        </marker>
+      </defs>
+      
+      <!-- Background -->
+      <rect x="0" y="0" width="100%" height="100%" fill="#f8f9fa"/>
+      
       <!-- Foundation -->
       <rect 
-        x="${100 - (config.width * 6)}" 
-        y="130" 
-        width="${config.width * 12}" 
-        height="8"
+        x="80" 
+        y="200" 
+        width="${totalWidth}" 
+        height="12"
         fill="#9ca3af" 
         stroke="#374151" 
-        stroke-width="1"
+        stroke-width="2"
       />
       
       <!-- Wall -->
       <rect 
-        x="${100 - (config.width * 6)}" 
-        y="${130 - (config.wallHeight * 8)}" 
-        width="${config.width * 12}" 
-        height="${config.wallHeight * 8}"
+        x="80" 
+        y="${200 - totalHeight}" 
+        width="${totalWidth}" 
+        height="${totalHeight}"
         fill="#fde68a" 
         stroke="#92400e" 
         stroke-width="2"
       />
       
-      ${getSideRoofSVG(config)}
+      <!-- Wall studs -->
+      ${studs.join('')}
       
-      <!-- Window -->
+      <!-- Sill plate -->
+      <rect x="80" y="${200 - 6}" width="${totalWidth}" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
+      
+      <!-- Top plate -->
+      <rect x="80" y="${200 - totalHeight}" width="${totalWidth}" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
+      
+      ${getSideRoofSVG(config, 80, 200 - totalHeight, totalWidth, scale)}
+      
       ${config.windowCount > 0 ? `
         <rect 
-          x="${100 - 8}" 
-          y="${130 - (config.wallHeight * 5)}" 
-          width="16" 
-          height="12"
+          x="${80 + totalWidth/2 - 12}" 
+          y="${200 - totalHeight + 30}" 
+          width="24" 
+          height="18"
           fill="#3b82f6" 
           stroke="#1e40af" 
-          stroke-width="1"
+          stroke-width="2"
         />
+        <!-- Window frame -->
+        <rect x="${80 + totalWidth/2 - 14}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <rect x="${80 + totalWidth/2 + 11}" y="${200 - totalHeight}" width="3" height="${totalHeight}" fill="#8B4513"/>
+        <!-- Window header -->
+        <rect x="${80 + totalWidth/2 - 14}" y="${200 - totalHeight + 28}" width="28" height="6" fill="#654321"/>
+        <text x="${80 + totalWidth/2}" y="${200 + 30}" text-anchor="middle" font-size="10">24" WINDOW</text>
       ` : ''}
       
       <!-- Dimensions -->
-      <text x="100" y="150" text-anchor="middle" font-size="12" fill="#000">
-        ${config.width}' WIDTH
-      </text>
+      <g stroke="#000" fill="#000" font-size="14" font-weight="bold">
+        <line x1="80" y1="230" x2="${80 + totalWidth}" y2="230" marker-start="url(#dimension)" marker-end="url(#dimension)" stroke-width="2"/>
+        <text x="${80 + totalWidth/2}" y="250" text-anchor="middle">${config.width}'-0" WIDTH</text>
+        
+        <line x1="60" y1="200" x2="60" y2="${200 - totalHeight}" marker-start="url(#dimension)" marker-end="url(#dimension)" stroke-width="2"/>
+        <text x="40" y="${200 - totalHeight/2}" text-anchor="middle" transform="rotate(-90, 40, ${200 - totalHeight/2})">${wallHeight}'-0"</text>
+      </g>
+      
+      <!-- Side Wall Construction Reference -->
+      <g transform="translate(${totalWidth + 120}, 50)">
+        <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">SIDE WALL FRAMING</text>
+        
+        <!-- Side wall detail -->
+        <g transform="translate(0, 20)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">End Wall Layout:</text>
+          <rect x="0" y="10" width="60" height="80" fill="none" stroke="#000" stroke-width="1"/>
+          <rect x="0" y="10" width="60" height="6" fill="#654321"/>
+          <text x="65" y="20" font-size="10" fill="#000">Top Plate (2×4)</text>
+          
+          <rect x="8" y="16" width="3" height="68" fill="#8B4513"/>
+          <rect x="19" y="16" width="3" height="68" fill="#8B4513"/>
+          <rect x="30" y="16" width="3" height="68" fill="#8B4513"/>
+          <rect x="41" y="16" width="3" height="68" fill="#8B4513"/>
+          <rect x="52" y="16" width="3" height="68" fill="#8B4513"/>
+          <text x="65" y="50" font-size="10" fill="#000">Studs @ 16" O.C.</text>
+          
+          <rect x="0" y="84" width="60" height="6" fill="#654321"/>
+          <text x="65" y="95" font-size="10" fill="#000">Bottom Plate (2×4)</text>
+        </g>
+        
+        <!-- Corner construction -->
+        <g transform="translate(0, 120)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Corner Detail:</text>
+          <rect x="0" y="10" width="20" height="20" fill="none" stroke="#000" stroke-width="1"/>
+          <rect x="0" y="10" width="6" height="20" fill="#8B4513"/>
+          <rect x="14" y="10" width="6" height="20" fill="#8B4513"/>
+          <text x="25" y="18" font-size="10" fill="#000">3-Stud Corner</text>
+          <text x="25" y="28" font-size="10" fill="#000">(2×4 + nailer)</text>
+        </g>
+        
+        <!-- Window/Door openings -->
+        <g transform="translate(0, 170)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Opening Headers:</text>
+          <rect x="0" y="10" width="40" height="6" fill="#654321"/>
+          <text x="45" y="18" font-size="10" fill="#000">2×6 Header (spans &lt; 6')</text>
+          <rect x="0" y="20" width="40" height="8" fill="#654321"/>
+          <text x="45" y="28" font-size="10" fill="#000">2×8 Header (spans 6'-8')</text>
+          <text x="45" y="38" font-size="10" fill="#000">Double up for load bearing</text>
+        </g>
+      </g>
+      
+      <!-- Title -->
+      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">SIDE ELEVATION</text>
+      <text x="${(totalWidth + 300)/2}" y="280" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
     </svg>
   `;
 }
 
 export function generateCrossSectionSVG(config: ShedConfig): string {
+  const scale = 40;
+  const wallHeight = config.wallHeight;
+  const totalWidth = config.width * scale;
+  const totalHeight = wallHeight * scale;
+  
+  // Floor joists at 16" on center
+  const joistSpacing = 16 * (scale / 12); // 16" on center
+  const joists = [];
+  for (let x = 80; x <= 80 + totalWidth; x += joistSpacing) {
+    joists.push(`<rect x="${x - 0.75}" y="200" width="1.5" height="18" fill="#8B4513"/>`);
+  }
+
   return `
-    <svg viewBox="0 0 200 140" style="width: 100%; height: 200px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 300} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+      <defs>
+        <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+          <circle cx="5" cy="5" r="2" fill="#000"/>
+        </marker>
+      </defs>
+      
+      <!-- Background -->
+      <rect x="0" y="0" width="100%" height="100%" fill="#f8f9fa"/>
+      
       <!-- Foundation -->
       <rect 
-        x="${100 - (config.width * 6)}" 
-        y="130" 
-        width="${config.width * 12}" 
-        height="8"
+        x="80" 
+        y="200" 
+        width="${totalWidth}" 
+        height="18"
         fill="#9ca3af" 
         stroke="#374151" 
+        stroke-width="2"
+      />
+      
+      <!-- Floor decking -->
+      <rect 
+        x="80" 
+        y="192" 
+        width="${totalWidth}" 
+        height="8"
+        fill="#fbbf24" 
+        stroke="#92400e" 
         stroke-width="1"
       />
       
       <!-- Floor joists -->
-      <g stroke="#8b4513" stroke-width="2">
-        ${Array.from({ length: Math.floor(config.width / 2) + 1 }).map((_, i) => `
-          <line 
-            x1="${100 - (config.width * 6) + (i * 12)}" 
-            y1="130" 
-            x2="${100 - (config.width * 6) + (i * 12)}" 
-            y2="125"
-          />
-        `).join('')}
-      </g>
+      ${joists.join('')}
       
-      <!-- Wall studs -->
-      <g stroke="#8b4513" stroke-width="1.5">
-        ${Array.from({ length: Math.floor(config.width / 1.33) + 1 }).map((_, i) => `
-          <line 
-            x1="${100 - (config.width * 6) + (i * 8)}" 
-            y1="130" 
-            x2="${100 - (config.width * 6) + (i * 8)}" 
-            y2="${130 - (config.wallHeight * 8)}"
-          />
-        `).join('')}
-      </g>
+      <!-- Sill plates -->
+      <rect x="80" y="186" width="6" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
+      <rect x="${80 + totalWidth - 6}" y="186" width="6" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
       
-      <!-- Walls -->
-      <rect 
-        x="${100 - (config.width * 6)}" 
-        y="${130 - (config.wallHeight * 8)}" 
-        width="3" 
-        height="${config.wallHeight * 8}"
-        fill="#fde68a" 
-        stroke="#92400e" 
-        stroke-width="1"
-      />
-      <rect 
-        x="${100 + (config.width * 6) - 3}" 
-        y="${130 - (config.wallHeight * 8)}" 
-        width="3" 
-        height="${config.wallHeight * 8}"
-        fill="#fde68a" 
-        stroke="#92400e" 
-        stroke-width="1"
-      />
+      <!-- Wall studs (left side) -->
+      <rect x="80" y="${200 - totalHeight}" width="6" height="${totalHeight}" fill="#fde68a" stroke="#92400e" stroke-width="2"/>
       
-      ${getCrossSectionRoofSVG(config)}
+      <!-- Wall studs (right side) -->
+      <rect x="${80 + totalWidth - 6}" y="${200 - totalHeight}" width="6" height="${totalHeight}" fill="#fde68a" stroke="#92400e" stroke-width="2"/>
+      
+      <!-- Top plates -->
+      <rect x="80" y="${200 - totalHeight}" width="6" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
+      <rect x="${80 + totalWidth - 6}" y="${200 - totalHeight}" width="6" height="6" fill="#654321" stroke="#000" stroke-width="1"/>
+      
+      ${getCrossSectionRoofSVG(config, 80, 200 - totalHeight, totalWidth, scale)}
       
       <!-- Dimensions -->
-      <text x="100" y="150" text-anchor="middle" font-size="12" fill="#000">
-        CROSS SECTION - ${config.width}' SPAN
-      </text>
+      <g stroke="#000" fill="#000" font-size="14" font-weight="bold">
+        <line x1="80" y1="230" x2="${80 + totalWidth}" y2="230" marker-start="url(#dimension)" marker-end="url(#dimension)" stroke-width="2"/>
+        <text x="${80 + totalWidth/2}" y="250" text-anchor="middle">${config.width}'-0" SPAN</text>
+        
+        <line x1="60" y1="200" x2="60" y2="${200 - totalHeight}" marker-start="url(#dimension)" marker-end="url(#dimension)" stroke-width="2"/>
+        <text x="40" y="${200 - totalHeight/2}" text-anchor="middle" transform="rotate(-90, 40, ${200 - totalHeight/2})">${wallHeight}'-0"</text>
+      </g>
+      
+      <!-- Cross Section Construction Reference -->
+      <g transform="translate(${totalWidth + 120}, 50)">
+        <text x="0" y="0" font-size="16" font-weight="bold" fill="#000">CROSS SECTION FRAMING</text>
+        
+        <!-- Floor joist detail -->
+        <g transform="translate(0, 20)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Floor Joist Layout:</text>
+          <rect x="0" y="10" width="80" height="60" fill="none" stroke="#000" stroke-width="1"/>
+          
+          <!-- Foundation -->
+          <rect x="0" y="55" width="80" height="15" fill="#9ca3af"/>
+          <text x="85" y="65" font-size="10" fill="#000">Concrete Foundation</text>
+          
+          <!-- Sill plates -->
+          <rect x="0" y="50" width="10" height="5" fill="#654321"/>
+          <rect x="70" y="50" width="10" height="5" fill="#654321"/>
+          <text x="85" y="55" font-size="10" fill="#000">Sill Plates (2×6)</text>
+          
+          <!-- Floor joists -->
+          <rect x="10" y="50" width="3" height="15" fill="#8B4513"/>
+          <rect x="23" y="50" width="3" height="15" fill="#8B4513"/>
+          <rect x="36" y="50" width="3" height="15" fill="#8B4513"/>
+          <rect x="49" y="50" width="3" height="15" fill="#8B4513"/>
+          <rect x="62" y="50" width="3" height="15" fill="#8B4513"/>
+          <text x="85" y="45" font-size="10" fill="#000">2×8 Joists @ 16" O.C.</text>
+          
+          <!-- Subfloor -->
+          <rect x="0" y="45" width="80" height="5" fill="#fbbf24"/>
+          <text x="85" y="50" font-size="10" fill="#000">3/4" Plywood Subfloor</text>
+        </g>
+        
+        <!-- Wall construction -->
+        <g transform="translate(0, 110)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Wall Construction:</text>
+          <rect x="0" y="10" width="15" height="60" fill="none" stroke="#000" stroke-width="1"/>
+          
+          <!-- Top plate -->
+          <rect x="0" y="10" width="15" height="5" fill="#654321"/>
+          <text x="20" y="18" font-size="10" fill="#000">Double Top Plate (2×4)</text>
+          
+          <!-- Studs -->
+          <rect x="2" y="15" width="3" height="50" fill="#8B4513"/>
+          <rect x="8" y="15" width="3" height="50" fill="#8B4513"/>
+          <text x="20" y="35" font-size="10" fill="#000">Wall Studs (2×4)</text>
+          <text x="20" y="45" font-size="10" fill="#000">@ 16" O.C.</text>
+          
+          <!-- Bottom plate -->
+          <rect x="0" y="65" width="15" height="5" fill="#654321"/>
+          <text x="20" y="72" font-size="10" fill="#000">Bottom Plate (2×4)</text>
+        </g>
+        
+        <!-- Roof structure -->
+        <g transform="translate(0, 190)">
+          <text x="0" y="0" font-size="14" font-weight="bold" fill="#333">Roof Structure:</text>
+          <text x="0" y="15" font-size="12" font-weight="bold" fill="#333">${config.roofType.charAt(0).toUpperCase() + config.roofType.slice(1)} Roof:</text>
+          
+          <text x="0" y="30" font-size="10" fill="#000">• 2×6 rafters @ 24" O.C.</text>
+          <text x="0" y="42" font-size="10" fill="#000">• Ridge beam or board</text>
+          <text x="0" y="54" font-size="10" fill="#000">• Ceiling joists @ 16" O.C.</text>
+          <text x="0" y="66" font-size="10" fill="#000">• Hurricane ties required</text>
+        </g>
+      </g>
+      
+      <!-- Title -->
+      <text x="${(totalWidth + 300)/2}" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">CROSS SECTION</text>
+      <text x="${(totalWidth + 300)/2}" y="280" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
     </svg>
   `;
+}
+
+function getCrossSectionRoofSVG(config: ShedConfig, startX: number, baseY: number, totalWidth: number, scale: number): string {
+  const leftX = startX;
+  const rightX = startX + totalWidth;
+  const centerX = startX + totalWidth / 2;
+  
+  switch (config.roofType) {
+    case 'gable':
+      return `
+        <!-- Gable roof rafters -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY}" 
+          x2="${centerX}" 
+          y2="${baseY - 40}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+        <line 
+          x1="${rightX - 6}" 
+          y1="${baseY}" 
+          x2="${centerX}" 
+          y2="${baseY - 40}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+        <!-- Ridge beam -->
+        <circle cx="${centerX}" cy="${baseY - 40}" r="3" fill="#654321"/>
+        <text x="${centerX + 10}" y="${baseY - 35}" font-size="10" fill="#000">Ridge Beam</text>
+        <!-- Ceiling joists -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY + 10}" 
+          x2="${rightX - 6}" 
+          y2="${baseY + 10}"
+          stroke="#8b4513" 
+          stroke-width="3"
+        />
+        <text x="${centerX}" y="${baseY + 25}" text-anchor="middle" font-size="10" fill="#000">Ceiling Joists @ 16" O.C.</text>
+      `;
+    case 'hip':
+      return `
+        <!-- Hip roof rafters -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY}" 
+          x2="${centerX}" 
+          y2="${baseY - 25}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+        <line 
+          x1="${rightX - 6}" 
+          y1="${baseY}" 
+          x2="${centerX}" 
+          y2="${baseY - 25}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+        <!-- Ridge board -->
+        <rect x="${centerX - 1}" y="${baseY - 30}" width="2" height="30" fill="#654321"/>
+        <text x="${centerX + 10}" y="${baseY - 20}" font-size="10" fill="#000">Ridge Board</text>
+      `;
+    case 'shed':
+    case 'lean-to':
+      return `
+        <!-- Shed roof rafters -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY}" 
+          x2="${rightX - 6}" 
+          y2="${baseY - 30}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+        <!-- Ceiling joists -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY + 10}" 
+          x2="${rightX - 6}" 
+          y2="${baseY + 10}"
+          stroke="#8b4513" 
+          stroke-width="3"
+        />
+        <text x="${centerX}" y="${baseY + 25}" text-anchor="middle" font-size="10" fill="#000">Sloped Rafters @ 24" O.C.</text>
+      `;
+    default:
+      return `
+        <!-- Standard roof structure -->
+        <line 
+          x1="${leftX + 6}" 
+          y1="${baseY}" 
+          x2="${rightX - 6}" 
+          y2="${baseY - 20}"
+          stroke="#8b4513" 
+          stroke-width="4"
+        />
+      `;
+  }
 }
 
 function getRoofSVG(config: ShedConfig, startX: number, baseY: number, totalWidth: number, scale: number): string {
@@ -528,98 +790,48 @@ function getRoofSVG(config: ShedConfig, startX: number, baseY: number, totalWidt
   }
 }
 
-function getSideRoofSVG(config: ShedConfig): string {
-  const baseY = 130 - (config.wallHeight * 8);
-  const leftX = 100 - (config.width * 6);
-  const rightX = 100 + (config.width * 6);
+function getSideRoofSVG(config: ShedConfig, startX: number, baseY: number, totalWidth: number, scale: number): string {
+  const leftX = startX;
+  const rightX = startX + totalWidth;
+  const centerX = startX + totalWidth / 2;
   
   switch (config.roofType) {
     case 'gable':
       return `
         <polygon 
-          points="${leftX},${baseY} 100,${baseY - 20} ${rightX},${baseY}"
+          points="${leftX},${baseY} ${centerX},${baseY - 30} ${rightX},${baseY}"
           fill="#7c2d12" 
           stroke="#451a03" 
           stroke-width="2"
         />
+        <!-- End wall rafter -->
+        <line x1="${centerX}" y1="${baseY}" x2="${centerX}" y2="${baseY - 30}" stroke="#8B4513" stroke-width="3"/>
+        <text x="${centerX + 10}" y="${baseY - 15}" font-size="10" fill="#000">End Truss</text>
       `;
     case 'hip':
       return `
         <polygon 
-          points="${leftX + 10},${baseY} 100,${baseY - 15} ${rightX - 10},${baseY}"
+          points="${leftX + 20},${baseY} ${centerX},${baseY - 20} ${rightX - 20},${baseY}"
           fill="#7c2d12" 
           stroke="#451a03" 
           stroke-width="2"
         />
+        <!-- Hip rafters -->
+        <line x1="${leftX}" y1="${baseY}" x2="${centerX}" y2="${baseY - 20}" stroke="#8B4513" stroke-width="2"/>
+        <line x1="${rightX}" y1="${baseY}" x2="${centerX}" y2="${baseY - 20}" stroke="#8B4513" stroke-width="2"/>
       `;
     default:
       return `
-        <rect 
-          x="${leftX}" 
-          y="${baseY - 10}" 
-          width="${config.width * 12}" 
-          height="10"
+        <polygon 
+          points="${leftX},${baseY - 15} ${rightX},${baseY - 8} ${rightX},${baseY} ${leftX},${baseY}"
           fill="#7c2d12" 
           stroke="#451a03" 
           stroke-width="2"
         />
+        <!-- Shed roof rafters -->
+        <line x1="${leftX}" y1="${baseY}" x2="${leftX}" y2="${baseY - 15}" stroke="#8B4513" stroke-width="2"/>
+        <line x1="${rightX}" y1="${baseY}" x2="${rightX}" y2="${baseY - 8}" stroke="#8B4513" stroke-width="2"/>
       `;
   }
 }
 
-function getCrossSectionRoofSVG(config: ShedConfig): string {
-  const baseY = 130 - (config.wallHeight * 8);
-  const leftX = 100 - (config.width * 6);
-  const rightX = 100 + (config.width * 6);
-  
-  switch (config.roofType) {
-    case 'gable':
-      return `
-        <polygon 
-          points="${leftX},${baseY} 100,${baseY - 20} ${rightX},${baseY}"
-          fill="none" 
-          stroke="#451a03" 
-          stroke-width="2"
-        />
-        <!-- Rafters -->
-        <g stroke="#8b4513" stroke-width="1.5">
-          <line x1="100" y1="${baseY}" x2="100" y2="${baseY - 20}" />
-          <line x1="${leftX}" y1="${baseY}" x2="100" y2="${baseY - 20}" />
-          <line x1="${rightX}" y1="${baseY}" x2="100" y2="${baseY - 20}" />
-        </g>
-      `;
-    case 'shed':
-    case 'lean-to':
-      return `
-        <line 
-          x1="${leftX}" y1="${baseY - 15}" 
-          x2="${rightX}" y2="${baseY - 5}"
-          stroke="#451a03" 
-          stroke-width="2"
-        />
-        <!-- Rafters -->
-        <g stroke="#8b4513" stroke-width="1.5">
-          ${Array.from({ length: 5 }).map((_, i) => `
-            <line 
-              x1="${leftX + (i * config.width * 3)}" 
-              y1="${baseY}" 
-              x2="${leftX + (i * config.width * 3)}" 
-              y2="${baseY - 15 + (i * 2.5)}"
-            />
-          `).join('')}
-        </g>
-      `;
-    default:
-      return `
-        <rect 
-          x="${leftX}" 
-          y="${baseY - 15}" 
-          width="${config.width * 12}" 
-          height="15"
-          fill="none" 
-          stroke="#451a03" 
-          stroke-width="2"
-        />
-      `;
-  }
-}

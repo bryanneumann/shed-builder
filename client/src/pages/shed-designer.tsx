@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { calculateMaterials } from "@/lib/shed-calculations";
-import { Package, Wrench, ExternalLink, Printer, BarChart3, Filter } from "lucide-react";
+import { Package, Wrench, ExternalLink, Printer, BarChart3, Filter, Expand } from "lucide-react";
 
 
 import Shed3DViewer from "@/components/shed-3d-viewer";
