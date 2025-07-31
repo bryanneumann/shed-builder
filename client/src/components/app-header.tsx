@@ -35,16 +35,7 @@ export default function AppHeader() {
             >
               Designer
             </Link>
-            <Link 
-              href="/templates" 
-              className={`transition-colors pb-1 ${
-                isActive("/templates") 
-                  ? "text-primary border-b-2 border-primary" 
-                  : "text-neutral-700 hover:text-primary"
-              }`}
-            >
-              Templates
-            </Link>
+
 
           </nav>
           

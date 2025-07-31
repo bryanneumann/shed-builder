@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ShedDesigner from "@/pages/shed-designer";
-import Templates from "@/pages/templates";
+
 
 import NotFound from "@/pages/not-found";
 
@@ -13,7 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={ShedDesigner} />
       <Route path="/designer" component={ShedDesigner} />
-      <Route path="/templates" component={Templates} />
+
 
       <Route component={NotFound} />
     </Switch>
