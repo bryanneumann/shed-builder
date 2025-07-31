@@ -42,7 +42,7 @@ export function generatePlanViewSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 450} ${totalHeight + 250}" style="width: 100%; height: 500px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 450} ${totalHeight + 300}" style="width: 100%; height: 550px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -167,8 +167,8 @@ export function generatePlanViewSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 450)/2}" y="35" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">FLOOR PLAN VIEW</text>
-      <text x="${(totalWidth + 450)/2}" y="${totalHeight + 235}" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${length}' × ${width}' Shed</text>
+      <text x="${(totalWidth + 450)/2}" y="50" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">FLOOR PLAN VIEW</text>
+      <text x="${(totalWidth + 450)/2}" y="${totalHeight + 270}" text-anchor="middle" font-size="16" fill="#000">Scale: 1/4" = 1'-0" • ${length}' × ${width}' Shed</text>
     </svg>
   `;
 }
@@ -187,7 +187,7 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
   }
   
   return `
-    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 350" style="width: 100%; height: 450px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -343,8 +343,8 @@ export function generateFrontElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">FRONT ELEVATION</text>
-      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
+      <text x="${(totalWidth + 350)/2}" y="40" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">FRONT ELEVATION</text>
+      <text x="${(totalWidth + 350)/2}" y="330" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.length}' × ${wallHeight}' Wall</text>
     </svg>
   `;
 }
@@ -363,7 +363,7 @@ export function generateSideElevationSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 350" style="width: 100%; height: 450px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -478,8 +478,8 @@ export function generateSideElevationSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">SIDE ELEVATION</text>
-      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
+      <text x="${(totalWidth + 350)/2}" y="40" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">SIDE ELEVATION</text>
+      <text x="${(totalWidth + 350)/2}" y="330" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • ${config.width}' × ${wallHeight}' End Wall</text>
     </svg>
   `;
 }
@@ -498,7 +498,7 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
   }
 
   return `
-    <svg viewBox="0 0 ${totalWidth + 350} 300" style="width: 100%; height: 400px; border: 1px solid #000;">
+    <svg viewBox="0 0 ${totalWidth + 350} 350" style="width: 100%; height: 450px; border: 1px solid #000;">
       <defs>
         <marker id="dimension" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
           <circle cx="5" cy="5" r="2" fill="#000"/>
@@ -620,8 +620,8 @@ export function generateCrossSectionSVG(config: ShedConfig): string {
       </g>
       
       <!-- Title -->
-      <text x="${(totalWidth + 350)/2}" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">CROSS SECTION</text>
-      <text x="${(totalWidth + 350)/2}" y="280" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
+      <text x="${(totalWidth + 350)/2}" y="40" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">CROSS SECTION</text>
+      <text x="${(totalWidth + 350)/2}" y="330" text-anchor="middle" font-size="12" fill="#000">Scale: 1/4" = 1'-0" • Structural Framing Details</text>
     </svg>
   `;
 }
