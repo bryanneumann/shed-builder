@@ -406,6 +406,12 @@ export default function ShedDesigner() {
 
   const handlePrintComplete = () => {
     const selectedStoreName = stores[selectedStore as keyof typeof stores].name;
+    const materials = calculateMaterials(config, selectedStore);
+    const lumberMaterials = materials.filter(m => m.category === "lumber");
+    const hardwareMaterials = materials.filter(m => m.category === "hardware");
+    const roofingMaterials = materials.filter(m => m.category === "roofing");
+    const sidingMaterials = materials.filter(m => m.category === "siding");
+    const foundationMaterials = materials.filter(m => m.category === "foundation");
     
     // Create a new window for printing with the comprehensive print layout
     const printWindow = window.open('', '_blank', 'width=800,height=600');
