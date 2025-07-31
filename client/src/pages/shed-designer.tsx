@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { calculateMaterials } from "@/lib/shed-calculations";
+import { Package, Wrench } from "lucide-react";
 import { Link } from "wouter";
 import AppHeader from "@/components/app-header";
 import Shed3DViewer from "@/components/shed-3d-viewer";
@@ -12,9 +14,63 @@ import ConfigurationTabs from "@/components/configuration-tabs";
 import CostSummary from "@/components/cost-summary";
 import StoreAvailability from "@/components/store-availability";
 import MaterialListModal from "@/components/material-list-modal";
-import { calculateMaterials } from "@/lib/shed-calculations";
 import { generatePlanViewSVG, generateFrontElevationSVG, generateSideElevationSVG, generateCrossSectionSVG } from "@/lib/blueprint-generator";
 import type { ShedConfig, ShedDesign } from "@shared/schema";
+
+// Live Shopping List Component
+function LiveShoppingList({ config, selectedStore, zipCode }: { 
+  config: ShedConfig; 
+  selectedStore: string; 
+  zipCode: string 
+}) {
+  const materials = calculateMaterials(config, selectedStore);
+  
+  // Group materials by category
+  const lumberMaterials = materials.filter(m => m.category === "lumber");
+  const hardwareMaterials = materials.filter(m => m.category === "hardware");
+  const roofingMaterials = materials.filter(m => m.category === "roofing");
+  const sidingMaterials = materials.filter(m => m.category === "siding");
+  const foundationMaterials = materials.filter(m => m.category === "foundation");
+
+  const materialGroups = [
+    { title: "Lumber & Wood Products", materials: lumberMaterials, icon: Package, color: "text-orange-600" },
+    { title: "Hardware & Fasteners", materials: hardwareMaterials, icon: Wrench, color: "text-gray-600" },
+    { title: "Roofing Materials", materials: roofingMaterials, icon: Package, color: "text-red-600" },
+    { title: "Siding & Trim", materials: sidingMaterials, icon: Package, color: "text-blue-600" },
+    { title: "Foundation Materials", materials: foundationMaterials, icon: Package, color: "text-gray-800" }
+  ];
+
+  return (
+    <div className="space-y-4 max-h-96 overflow-y-auto">
+      {materialGroups.map(({ title, materials, icon: Icon, color }) => 
+        materials.length > 0 && (
+          <div key={title}>
+            <h4 className="font-medium text-sm mb-2 flex items-center">
+              <Icon className={`h-4 w-4 mr-2 ${color}`} />
+              {title}
+            </h4>
+            <div className="space-y-1">
+              {materials.map((material, index) => (
+                <div key={index} className="flex justify-between items-center text-sm py-1 px-2 bg-neutral-50 rounded">
+                  <div className="flex-1">
+                    <span className="font-medium">{material.name}</span>
+                    <span className="text-neutral-500 ml-2">({material.quantity} {material.unit})</span>
+                  </div>
+                  <span className="font-bold text-primary">${material.estimatedPrice.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      )}
+      {materials.length === 0 && (
+        <div className="text-center text-neutral-500 py-4">
+          Configure your shed to see materials
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ShedDesigner() {
   const { toast } = useToast();
@@ -531,6 +587,27 @@ export default function ShedDesigner() {
               onGenerateShoppingList={handleGenerateShoppingList}
               onPrintPlans={handlePrintPlans}
             />
+
+            {/* Live Shopping List */}
+            <div className="bg-white rounded-lg shadow-material p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-neutral-900">Shopping List</h3>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-neutral-600">Store:</label>
+                  <select 
+                    value={selectedStore} 
+                    onChange={(e) => setSelectedStore(e.target.value)}
+                    className="text-sm border border-neutral-300 rounded px-2 py-1"
+                  >
+                    <option value="home-depot">Home Depot</option>
+                    <option value="lowes">Lowe's</option>
+                    <option value="menards">Menards</option>
+                  </select>
+                </div>
+              </div>
+              
+              <LiveShoppingList config={config} selectedStore={selectedStore} zipCode={zipCode} />
+            </div>
             
             {/* Store Availability */}
             <StoreAvailability zipCode={zipCode} />
