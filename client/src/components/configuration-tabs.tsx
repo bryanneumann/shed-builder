@@ -143,7 +143,6 @@ export default function ConfigurationTabs({ config, onConfigChange }: Configurat
                     <SelectItem value="wood">Wood Lap Siding</SelectItem>
                     <SelectItem value="metal">Metal Siding</SelectItem>
                     <SelectItem value="fiber-cement">Fiber Cement (HardiePlank)</SelectItem>
-                    <SelectItem value="fiber-cement">Fiber Cement (HardiePlank)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
